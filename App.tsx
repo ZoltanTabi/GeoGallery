@@ -26,53 +26,80 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
-declare const global: {HermesInternal: null | {}};
+import { 
+  Provider as PaperProvider 
+} from 'react-native-paper';
 
-const App = () => {
+import { 
+  NavigationContainer 
+} from '@react-navigation/native';
+
+import {
+   createMaterialBottomTabNavigator 
+} from '@react-navigation/material-bottom-tabs';
+
+import
+  MaterialCommunityIcons
+from 'react-native-vector-icons/MaterialCommunityIcons';
+
+import
+  CameraScreen
+from './components/CameraScreen';
+
+import
+  MapScreen
+from './components/MapScreen';
+
+import
+  GalleryScreen
+from './components/GalleryScreen';
+
+declare const global: {HermesInternal: null | {}};
+const Tab = createMaterialBottomTabNavigator();
+
+const NavBar = () => {
   return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header />
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
-            </View>
-          )}
-          <View style={styles.body}>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Step One</Text>
-              <Text style={styles.sectionDescription}>
-                Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-                screen and then come back to see your edits.
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>See Your Changes</Text>
-              <Text style={styles.sectionDescription}>
-                <ReloadInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Debug</Text>
-              <Text style={styles.sectionDescription}>
-                <DebugInstructions />
-              </Text>
-            </View>
-            <View style={styles.sectionContainer}>
-              <Text style={styles.sectionTitle}>Learn More</Text>
-              <Text style={styles.sectionDescription}>
-                Read the docs to discover what to do next:
-              </Text>
-            </View>
-            <LearnMoreLinks />
-          </View>
-        </ScrollView>
-      </SafeAreaView>
-    </>
+    <Tab.Navigator
+      initialRouteName="GalleryScreen"
+      activeColor="#cccccc"
+      inactiveColor="#333333"
+      barStyle={{ backgroundColor: '#ac5c5c' }}
+      shifting={true}
+    >
+      <Tab.Screen
+        name="GalleryScreen"
+        component={GalleryScreen}
+        options={{
+          tabBarLabel: 'Gallery',
+          tabBarColor: '#ac5c5c',
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="camera-burst" color={color} size={26} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="MapScreen"
+        component={MapScreen}
+        options={{
+          tabBarColor: '#5cac7b',
+          tabBarLabel: 'Map',
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="map" color={color} size={26} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="CameraScreen"
+        component={CameraScreen}
+        options={{
+          tabBarColor: '#5c80ac',
+          tabBarLabel: 'Camera',
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="camera-plus" color={color} size={26} />
+          ),
+        }}
+      />
+    </Tab.Navigator>
   );
 };
 
@@ -115,4 +142,12 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+export default function App() {
+  return (
+    <PaperProvider>
+      <NavigationContainer>
+        <NavBar />
+      </NavigationContainer>
+    </PaperProvider>
+  );
+}
