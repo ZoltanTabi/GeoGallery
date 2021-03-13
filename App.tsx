@@ -1,14 +1,4 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * Generated with the TypeScript template
- * https://github.com/react-native-community/react-native-template-typescript
- *
- * @format
- */
-
-import React from 'react';
+import React, { useLayoutEffect } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -54,10 +44,19 @@ import
   GalleryScreen
 from './components/GalleryScreen';
 
-declare const global: {HermesInternal: null | {}};
+import { Provider as StoreProvider, useDispatch } from "react-redux";
+import store from './storage/store';
+import { initState } from './storage/actions/commonAction';
+
 const Tab = createMaterialBottomTabNavigator();
 
 const NavBar = () => {
+  const dispatch = useDispatch();
+
+  useLayoutEffect(() => {
+    dispatch(initState());
+  }, []);
+
   return (
     <Tab.Navigator
       initialRouteName="GalleryScreen"
@@ -144,10 +143,12 @@ const styles = StyleSheet.create({
 
 export default function App() {
   return (
-    <PaperProvider>
-      <NavigationContainer>
-        <NavBar />
-      </NavigationContainer>
-    </PaperProvider>
+    <StoreProvider store={store}>
+      <PaperProvider>
+        <NavigationContainer>
+          <NavBar />
+        </NavigationContainer>
+      </PaperProvider>
+    </StoreProvider>
   );
 }
