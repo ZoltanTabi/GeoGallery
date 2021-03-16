@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
 import {
   SafeAreaView,
@@ -8,6 +9,9 @@ import {
   StatusBar,
 } from 'react-native';
 
+import { Button } from 'react-native-paper';
+import { color } from 'react-native-reanimated';
+
 import {
   Header,
   LearnMoreLinks,
@@ -17,14 +21,33 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 const GalleryScreen = () => {
+
+  const navigation = useNavigation();
+
+  const onLabelEditing = () => {
+    navigation.navigate('Editing label')
+  }
+
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>This will be the gallery screen.</Text>
+    <View >
+      <Button style={{margin: 40}}
+              icon='pencil' mode='contained' color='#ac5c5c' 
+              labelStyle={{ color: '#cccccc'}} onPress={() => onLabelEditing()}>
+        Edit label
+      </Button>
+      <View style={{justifyContent: 'center', alignItems: 'center' }}>
+        <Text >This will be the gallery screen.</Text>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    justifyContent: 'space-evenly'
+  },
   scrollView: {
     backgroundColor: Colors.lighter,
   },
