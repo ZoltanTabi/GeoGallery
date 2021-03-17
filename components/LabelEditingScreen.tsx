@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native';
 import { Guid } from 'guid-typescript';
 import React, { ReactElement, useState } from 'react';
 import { View, useWindowDimensions, } from 'react-native';
@@ -13,11 +14,17 @@ const LabelEditingScreen = (): ReactElement => {
 
 	const onTextChange = (value: string) => {
 		changeObject({...labelObject, text: value});
-	  }
+	}
 	  
-	  const onColorChange= (value: string) => {
+	const onColorChange= (value: string) => {
 		changeObject({...labelObject, color: value});
-	  }
+	}
+
+	const navigation = useNavigation();
+
+  	const onConfirming = () => {
+    	navigation.goBack()
+  	}
 
 	return (
 		<View style={{
@@ -74,7 +81,8 @@ const LabelEditingScreen = (): ReactElement => {
 					justifyContent: 'flex-end', 
 					backgroundColor: '#cccccc', 
 					paddingRight: '5%'}}>
-				<Button icon='check-bold' mode='contained' color='#ac5c5c' labelStyle={{ color: '#cccccc'}}>
+				<Button icon='check-bold' mode='contained' color='#ac5c5c' labelStyle={{ color: '#cccccc'}}
+						onPress={() => onConfirming()}>
 					Confirm
 				</Button>
 			</View>
