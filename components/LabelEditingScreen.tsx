@@ -5,8 +5,12 @@ import { View, useWindowDimensions, } from 'react-native';
 import { TriangleColorPicker, fromHsv } from 'react-native-color-picker';
 import { Text, TextInput, Chip, Button  } from 'react-native-paper';
 import { Label } from '../interfaces/label';
+import { createLabel } from '../storage/actions/labelAction';
+import { useDispatch } from 'react-redux';
 
 const LabelEditingScreen = (): ReactElement => {
+
+	const dispatch = useDispatch();
 
 	const windowHeight = useWindowDimensions().height;
 
@@ -23,7 +27,8 @@ const LabelEditingScreen = (): ReactElement => {
 	const navigation = useNavigation();
 
   	const onConfirming = () => {
-    	navigation.goBack()
+		dispatch(createLabel(labelObject));
+    	navigation.goBack();
   	}
 
 	return (
