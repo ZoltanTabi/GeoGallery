@@ -52,7 +52,7 @@ const LabelEditingScreen = (): ReactElement => {
 
 	const onDeleting = () => {
 		dispatch(commonDeleteLabel(labelObject.id));
-		navigation.canGoBack();
+		navigation.goBack();
 	}
 
 	return (

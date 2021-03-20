@@ -19,7 +19,7 @@ import { Dispatch } from 'redux';
  */
 export function initPhotoState() {
     return (dispatch: Dispatch<any>) => {
-        getData(StateEnum.labels)
+        getData(StateEnum.photos)
             .then((result) => {
             dispatch(
                 {
