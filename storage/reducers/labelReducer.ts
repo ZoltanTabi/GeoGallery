@@ -1,5 +1,5 @@
 import { StateEnum } from '../../enums/stateEnum';
-import { findIndexById } from '../../helpers/functions';
+import { findIndexById, guidToString } from '../../helpers/functions';
 import {
     LabelState,
     INIT_LABEL_STATE,
@@ -48,7 +48,7 @@ export function labelReducer(state = initialState, action: LabelActionTypes): La
         {
             const newState: LabelState = {
                 labels: state.labels.filter(
-                    label => !label.id.equals(action.payload.id)
+                    label => guidToString(label.id) !== guidToString(action.payload.id)
                 )
             };
 
@@ -68,7 +68,7 @@ export function labelReducer(state = initialState, action: LabelActionTypes): La
         case REMOVE_PHOTO_FROM_LABEL:
         {
             const index = findIndexById(state.labels, action.payload.labelId);
-            state.labels[index].photos = state.labels[index].photos.filter(x => !x.equals(action.payload.photoId));
+            state.labels[index].photos = state.labels[index].photos.filter(x => guidToString(x) !== guidToString(action.payload.photoId));
             storeLabelState(state);
 
             return {
@@ -78,7 +78,7 @@ export function labelReducer(state = initialState, action: LabelActionTypes): La
         case REMOVE_PHOTO_FROM_ALL_LABEL:
         {
             state.labels.forEach(x => {
-                x.photos = x.photos.filter(y => !y.equals(action.payload.photoId));
+                x.photos = x.photos.filter(y => guidToString(y) !== guidToString(action.payload.photoId));
             });
             storeLabelState(state);
 
