@@ -47,8 +47,12 @@ from './components/GalleryScreen';
 import { Provider as StoreProvider, useDispatch } from "react-redux";
 import store from './storage/store';
 import { initState } from './storage/actions/commonAction';
+import LabelEditingScreen from './components/LabelEditingScreen';
+import { createStackNavigator } from '@react-navigation/stack';
+import { color } from 'react-native-reanimated';
 
 const Tab = createMaterialBottomTabNavigator();
+const Stack = createStackNavigator();
 
 const NavBar = () => {
   const dispatch = useDispatch();
@@ -146,7 +150,17 @@ export default function App() {
     <StoreProvider store={store}>
       <PaperProvider>
         <NavigationContainer>
-          <NavBar />
+          <Stack.Navigator>
+            <Stack.Screen name="GeoGallery" component={NavBar} 
+                          options={{
+                            headerShown: false
+                          }}/>
+            <Stack.Screen name="Editing label" component={LabelEditingScreen} 
+                          options={{
+                            headerTintColor: '#cccccc',
+                            headerStyle: { backgroundColor: '#ac5c5c' }
+                          }}/>
+          </Stack.Navigator>
         </NavigationContainer>
       </PaperProvider>
     </StoreProvider>
