@@ -5,8 +5,10 @@ import { View, useWindowDimensions, } from 'react-native';
 import { TriangleColorPicker, fromHsv } from 'react-native-color-picker';
 import { Text, TextInput, Chip, Button  } from 'react-native-paper';
 import { Label } from '../interfaces/label';
-import { createLabel } from '../storage/actions/labelAction';
+import { createLabel, deleteLabel, updateLabel } from '../storage/actions/labelAction';
 import { useDispatch } from 'react-redux';
+import { useRoute, RouteProp } from '@react-navigation/native';
+import { commonDeleteLabel } from '../storage/actions/commonAction';
 
 const LabelEditingScreen = (): ReactElement => {
 
@@ -14,7 +16,13 @@ const LabelEditingScreen = (): ReactElement => {
 
 	const windowHeight = useWindowDimensions().height;
 
-	const [labelObject, changeObject] = useState<Label>({id: Guid.create(),text: 'Label', color: 'purple', photos: []});
+	const route = useRoute<RouteProp<{ params: { propLabel: Label } }, 'params'>>();
+
+	const propLabel = route.params?.propLabel;
+
+	const initLabel : Label = propLabel != undefined ? propLabel : {id: Guid.create(),text: 'Label', color: 'purple', photos: []}
+
+	const [labelObject, changeObject] = useState<Label>(initLabel);
 
 	const onTextChange = (value: string) => {
 		changeObject({...labelObject, text: value});
@@ -27,9 +35,25 @@ const LabelEditingScreen = (): ReactElement => {
 	const navigation = useNavigation();
 
   	const onConfirming = () => {
-		dispatch(createLabel(labelObject));
+		if(propLabel == undefined)
+		{
+			dispatch(createLabel(labelObject));
+		}
+		else
+		{
+			dispatch(updateLabel(labelObject));
+		}
     	navigation.goBack();
   	}
+
+	const onCanceling = () => {
+		navigation.goBack();
+	}
+
+	const onDeleting = () => {
+		dispatch(commonDeleteLabel(labelObject.id));
+		navigation.canGoBack();
+	}
 
 	return (
 		<View style={{
@@ -64,6 +88,7 @@ const LabelEditingScreen = (): ReactElement => {
 									placeholder: '#ac5c5c', 
 									text: 'black', 
 									background: '#cccccc' } }}
+					value={labelObject.text}
 					onChangeText={(changedText => onTextChange(changedText))} />
 			</View>
 			<View style={{ 
@@ -76,17 +101,27 @@ const LabelEditingScreen = (): ReactElement => {
 				<TriangleColorPicker
 					hideControls={true} 
 					style={{ flex: 1 }} 
-					oldColor={labelObject.color} 
+					oldColor={labelObject.color}
 					onColorChange={(changedColor => onColorChange(fromHsv(changedColor)))}/>
 			</View>
 			<View style={{ 
 					flex: 3, 
 					flexDirection: 'row', 
-					flexWrap: 'wrap', 
-					justifyContent: 'flex-end', 
+					flexWrap: 'wrap',
+					alignItems: 'center', 
+					justifyContent: 'center',
 					backgroundColor: '#cccccc', 
-					paddingRight: '5%'}}>
-				<Button icon='check-bold' mode='contained' color='#ac5c5c' labelStyle={{ color: '#cccccc'}}
+					paddingHorizontal: '2%'}}>
+				<Button icon='cancel' mode='contained' color='#ac5c5c' style={{marginHorizontal: 5}} labelStyle={{ color: '#cccccc'}}
+						onPress={() => onCanceling()}>
+					Cancel
+				</Button>
+				{ propLabel != undefined &&
+				<Button icon='trash-can' mode='contained' color='#ac5c5c' style={{marginHorizontal: 5}} labelStyle={{ color: '#cccccc'}}
+						onPress={() => onDeleting()}>
+					Delete label
+				</Button>}
+				<Button icon='check-bold' mode='contained' color='#ac5c5c' style={{marginHorizontal: 5}} labelStyle={{ color: '#cccccc'}}
 						onPress={() => onConfirming()}>
 					Confirm
 				</Button>

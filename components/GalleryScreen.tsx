@@ -24,17 +24,15 @@ import {
 
 import { useSelector } from 'react-redux';
 import { guidToString } from '../helpers/functions';
-import { LabelState, Label } from '../interfaces/label';
+import { Label } from '../interfaces/label';
 import { RootState } from '../storage';
-import { FlatGrid } from 'react-native-super-grid';
-import { Item } from 'react-native-paper/lib/typescript/components/List/List';
 
 const GalleryScreen = () => {
 
   const navigation = useNavigation();
 
-  const onLabelEditing = () => {
-    navigation.navigate('Editing label')
+  const onLabelEditing = (propLabel?: Label) => {
+    navigation.navigate('Editing label', {propLabel});
   }
 
   const labelState = useSelector((state: RootState) => state.labelState);
@@ -57,14 +55,18 @@ const GalleryScreen = () => {
                 textStyle={{ color:'white',fontSize: 15 }}
                 style={{ margin: 4, backgroundColor: item.color }}
                 key={guidToString(item.id)}
+                onPress={() => {}}
+                onLongPress={() => onLabelEditing(item)}
                 />
           );
         })}
       </View>
       <View style={{flex: 1}}>
         <Button style={{margin: 40}}
-                icon='plus' mode='contained' color='#ac5c5c' 
-                labelStyle={{ color: '#cccccc'}} onPress={() => onLabelEditing()}>
+                icon='plus' mode='contained' 
+                color='#ac5c5c' 
+                labelStyle={{ color: '#cccccc'}} 
+                onPress={() => onLabelEditing()}>
           New label
         </Button>
       </View>      
