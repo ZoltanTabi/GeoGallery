@@ -31,7 +31,7 @@ import { guidToString } from '../helpers/functions';
 import { Label } from '../interfaces/label';
 import { ImageType, Photo } from '../interfaces/photo';
 import { RootState } from '../storage';
-import { addMultiplePhoto } from '../storage/actions/photoAction';
+import { addMultiplePhoto, addPhotoFromGallery } from '../storage/actions/photoAction';
 
 const GalleryScreen = () => {
 
@@ -53,7 +53,19 @@ const GalleryScreen = () => {
   const onStateChange = (open: boolean) => setState( open );
   const open = state;
 
-  const addPhotoByGallery = () =>{
+  const addPhotoByCamera = () => {
+    ImageCropPicker.openCamera({
+      mediaType: "photo",
+      includeExif: true,
+      includeBase64: true
+    }).then(image => {
+      console.log(image.exif);
+      dispatch(addPhotoFromGallery({id: Guid.create(), imageUri: `data:${image.mime};base64,${image.data}`, type: ImageType.Gallery,
+                                  labels: [], height: image.height, width: image.width}))
+    }).catch(error => console.log(error));
+  }
+
+  const addPhotoByGallery = () => {
     ImageCropPicker.openPicker({
       multiple: true,
       mediaType: 'photo',
@@ -132,7 +144,7 @@ const GalleryScreen = () => {
                   icon: 'camera-plus',
                   color: '#cccccc',
                   style: {backgroundColor: '#5c80ac'},
-                  onPress: () => console.log('Pressed star'),
+                  onPress: () => addPhotoByCamera(),
                   small: false
                 },
                 {
