@@ -1,0 +1,82 @@
+name: Publish
+
+on:
+  release:
+    types: [created]
+    
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps: 
+      - uses: actions/checkout@v2
+      - name: Install npm dependencies
+        run: |
+          npm install
+      - name: Replace API key
+        run: |
+          perl -pi -e 's/GOOGLE_MAPS_API_KEY/"$ENV{TOKEN}"/' ./android/app/src/main/AndroidManifest.xml 
+            &&
+          perl -pi -e 's/GOOGLE_MAPS_API_KEY/"$ENV{TOKEN}"/' ./android/app/src/main/res/values/google_maps_api.xml
+          env:
+            TOKEN: ${{ secrets.GOOGLE_MAP_API_KEY }}
+      - name: Build Android Release
+        run: |
+          cd android && ./gradlew assembleRelease
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: GeoGallery.apk
+          path: 
+      - name: Upload apk to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: GeoGallery.apk
+          asset_name: GeoGallery.apk
+          tag: ${{ github.ref }}
+          overwrite: true
+          body: "Android apk file"
+      - name: Remove File
+        uses: JesseTG/rm@v1.0.2
+        with:
+          path: GeoGallery.apk
+         
+  build-ios:
+    runs-on: [self-hosted, macos]
+    steps: 
+      - uses: actions/checkout@v2
+      - name: Install npm dependencies
+        run: |
+          npm install
+      - name: Install pod dependencies
+        run: |
+          cd ios && pod install
+      - name: Replace API key
+        run: |
+          perl -pi -e 's/GOOGLE_MAPS_API_KEY/"$ENV{TOKEN}"/' ios/GeoGallery/AppDelegate.m
+          env:
+            TOKEN: ${{ secrets.GOOGLE_MAP_API_KEY }}
+      - name: Build app
+        run: |       
+          xcodebuild -workspace myapp.xcworkspace -scheme myapp archive -archivePath myapp.xcarchive -allowProvisioningUpdates
+          xcodebuild -exportArchive -archivePath ./myapp.xcarchive -exportPath . -exportOptionsPlist myapp/Info.plist
+          mv myapp.ipa ../myapp.ipa
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v1
+        with:
+          name: GeoGallery.ipa
+          path: 
+      - name: Upload ipa to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: GeoGallery.ipa
+          asset_name: GeoGallery.ipa
+          tag: ${{ github.ref }}
+          overwrite: true
+          body: "IOS ipa file"
+      - name: Remove File
+        uses: JesseTG/rm@v1.0.2
+        with:
+          path: GeoGallery.ipa
+       
