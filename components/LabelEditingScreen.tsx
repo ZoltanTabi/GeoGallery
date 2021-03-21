@@ -83,7 +83,7 @@ const LabelEditingScreen = (): ReactElement => {
 				<TextInput  
 					mode='outlined' 
 					selectionColor='#ac5c5c' 
-					style={{fontSize: 20}}
+					style={{fontSize: 15}}
 					theme={{ colors: { primary: '#ac5c5c', 
 									placeholder: '#ac5c5c', 
 									text: 'black', 

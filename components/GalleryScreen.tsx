@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
+import { Guid } from 'guid-typescript';
 import React, { Children } from 'react';
 import {
   SafeAreaView,
@@ -9,6 +10,8 @@ import {
   StatusBar,
   FlatList,
   useWindowDimensions,
+  Pressable,
+  Image,
 } from 'react-native';
 
 import { Button, Chip } from 'react-native-paper';
@@ -22,12 +25,16 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { guidToString } from '../helpers/functions';
 import { Label } from '../interfaces/label';
+import { ImageType, Photo } from '../interfaces/photo';
 import { RootState } from '../storage';
+import { addMultiplePhoto } from '../storage/actions/photoAction';
 
 const GalleryScreen = () => {
+
+  const dispatch = useDispatch();
 
   const navigation = useNavigation();
 
@@ -35,9 +42,21 @@ const GalleryScreen = () => {
     navigation.navigate('Editing label', {propLabel});
   }
 
+  const onFullImage = (propPhoto?: Photo) => {
+    navigation.navigate('Full image', {propPhoto});
+  }
+
   const labelState = useSelector((state: RootState) => state.labelState);
 
   const photoState = useSelector((state: RootState) => state.photoState);
+
+  /*const pics = () => {
+    const photos: Photo[] = [{id: Guid.create(), imageUri: 'https://www.mamaison.com/data/destinations/df/750x640.exact.q85/budapest-lg.jpg?_images_storage', type: ImageType.Gallery, labels: []},
+                            {id: Guid.create(), imageUri: 'https://www.globeguide.ca/wp-content/uploads/2015/12/hungary-budapest-parliament-building-1.jpg', type: ImageType.Gallery, labels: []},
+                            {id: Guid.create(), imageUri: 'https://travelhouse.hu/wp-content/uploads/2020/05/the-hungarian-parliament-on-the-danube-river-at-sunset-in-budapest-hungary-945207010-23afbc9012d54bc4bb7c8a1f8c90075b.jpg', type: ImageType.Gallery, labels: []}]
+  
+    dispatch(addMultiplePhoto(photos));
+  }*/
 
   return (
     <View style={{flex: 1, margin: 10}}>
@@ -71,17 +90,25 @@ const GalleryScreen = () => {
                 onPress={() => onLabelEditing()}>
           New label
         </Button>
-        <Button style={{margin: 40}}
-                icon='plus' mode='contained' 
-                color='#ac5c5c' 
-                labelStyle={{ color: '#cccccc'}} 
-                onPress={() => onLabelEditing()}>
-          add pictures
-        </Button>
-      </View>      
-      <View style={{ flex : 6, justifyContent: 'center', alignItems: 'center' }}>
-        <Text >This will be the gallery screen.</Text>
-      </View>
+      </View> 
+      <View style={{ flex : 5, 
+                    padding: 5,
+                    alignItems: 'center' }}>
+        <FlatList
+          numColumns={2}
+          data={photoState.photos}
+          keyExtractor={item => guidToString(item.id)}
+          renderItem={({item})=>{
+            return (
+              <Pressable onPress={() => onFullImage(item)}>
+                <Image source={{uri: item.imageUri}} 
+                        style={{ height: 180, width: 180, margin: 5 }}/>
+              </Pressable>
+            )
+          }}
+          
+        />
+        </View>
     </View>
   );
 };

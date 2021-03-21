@@ -50,6 +50,7 @@ import { initState } from './storage/actions/commonAction';
 import LabelEditingScreen from './components/LabelEditingScreen';
 import { createStackNavigator } from '@react-navigation/stack';
 import { color } from 'react-native-reanimated';
+import FullImageScreen from './components/FullImageScreen';
 
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -159,6 +160,10 @@ export default function App() {
                           options={{
                             headerTintColor: '#cccccc',
                             headerStyle: { backgroundColor: '#ac5c5c' }
+                          }}/>
+            <Stack.Screen name="Full image" component={FullImageScreen} 
+                          options={{
+                            headerShown: false
                           }}/>
           </Stack.Navigator>
         </NavigationContainer>
