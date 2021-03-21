@@ -75,7 +75,7 @@ const LabelEditingScreen = (): ReactElement => {
 			</View>
 			<View style={{ 
 				flex: 2, 
-				paddingHorizontal: 40, 
+				paddingHorizontal: '10%', 
 				backgroundColor: '#cccccc'}}>
 				<Text style={{ color: '#5c80ac', fontSize: 20 }}>
 					Label name:
@@ -93,14 +93,14 @@ const LabelEditingScreen = (): ReactElement => {
 			</View>
 			<View style={{ 
 				flex: 10, 
-				padding: 40, 
+				padding: '10%', 
 				backgroundColor: '#cccccc'}}>
 				<Text style={{ color: '#5c80ac', fontSize: 20 }}>
 					Label color:
 				</Text>
 				<TriangleColorPicker
 					hideControls={true} 
-					style={{ flex: 1 }} 
+					style={{ flex: 1, padding: '10%' }} 
 					oldColor={labelObject.color}
 					onColorChange={(changedColor => onColorChange(fromHsv(changedColor)))}/>
 			</View>
@@ -112,16 +112,16 @@ const LabelEditingScreen = (): ReactElement => {
 					justifyContent: 'center',
 					backgroundColor: '#cccccc', 
 					paddingHorizontal: '2%'}}>
-				<Button icon='cancel' mode='contained' color='#5c80ac' style={{marginHorizontal: 2}} labelStyle={{ color: '#cccccc'}}
+				<Button icon='cancel' mode='contained' color='#5c80ac' style={{marginHorizontal: '0.5%'}} labelStyle={{ color: '#cccccc'}}
 						onPress={() => onCanceling()}>
 					Cancel
 				</Button>
 				{ propLabel != undefined &&
-				<Button icon='trash-can' mode='contained' color='#5c80ac' style={{marginHorizontal: 2}} labelStyle={{ color: '#cccccc'}}
+				<Button icon='trash-can' mode='contained' color='#5c80ac' style={{marginHorizontal: '0.5%'}} labelStyle={{ color: '#cccccc'}}
 						onPress={() => onDeleting()}>
 					Delete label
 				</Button>}
-				<Button icon='check-bold' mode='contained' color='#5c80ac' style={{marginHorizontal: 2}} labelStyle={{ color: '#cccccc'}}
+				<Button icon='check-bold' mode='contained' color='#5c80ac' style={{marginHorizontal: '0.5%'}} labelStyle={{ color: '#cccccc'}}
 						onPress={() => onConfirming()}>
 					Confirm
 				</Button>

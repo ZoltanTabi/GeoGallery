@@ -13,6 +13,7 @@ import {
   Pressable,
   Image,
 } from 'react-native';
+import ImageCropPicker from 'react-native-image-crop-picker';
 
 import { Button, Chip, Portal, FAB, Provider } from 'react-native-paper';
 import { color } from 'react-native-reanimated';
@@ -41,8 +42,8 @@ const GalleryScreen = () => {
     navigation.navigate('Editing label', {propLabel});
   }
 
-  const onFullImage = (propPhoto?: Photo) => {
-    navigation.navigate('Full image', {propPhoto});
+  const onFullImage = (propPhoto: Guid) => {
+    navigation.navigate('Full image', {id: guidToString(propPhoto)});
   }
 
   const labelState = useSelector((state: RootState) => state.labelState);
@@ -52,19 +53,27 @@ const GalleryScreen = () => {
   const onStateChange = (open: boolean) => setState( open );
   const open = state;
 
-  /*const pics = () => {
-    const photos: Photo[] = [{id: Guid.create(), imageUri: 'https://www.mamaison.com/data/destinations/df/750x640.exact.q85/budapest-lg.jpg?_images_storage', type: ImageType.Gallery, labels: []},
-                            {id: Guid.create(), imageUri: 'https://www.globeguide.ca/wp-content/uploads/2015/12/hungary-budapest-parliament-building-1.jpg', type: ImageType.Gallery, labels: []},
-                            {id: Guid.create(), imageUri: 'https://travelhouse.hu/wp-content/uploads/2020/05/the-hungarian-parliament-on-the-danube-river-at-sunset-in-budapest-hungary-945207010-23afbc9012d54bc4bb7c8a1f8c90075b.jpg', type: ImageType.Gallery, labels: []}]
-  
-    dispatch(addMultiplePhoto(photos));
-  }*/
+  const addPhotoByGallery = () =>{
+    ImageCropPicker.openPicker({
+      multiple: true,
+      mediaType: 'photo',
+      includeExif: true,
+      includeBase64: true
+      }).then(images => {
+        const photos: Photo[] = []
+        images.forEach(image => {
+          photos.push({id: Guid.create(), imageUri: `data:${image.mime};base64,${image.data}`, type: ImageType.Gallery,
+                      labels: [], height: image.height, width: image.width})
+        });
+        dispatch(addMultiplePhoto(photos));
+    }).catch(error => console.log(error));
+  }
 
   return (
     <View style={{flex: 1}}>
       <View style={{
             marginTop: 10,
-            padding: 5,
+            padding: '2%',
             flexDirection: 'row', 
             flexWrap: 'wrap',
             alignItems: 'center', 
@@ -85,8 +94,8 @@ const GalleryScreen = () => {
           );
         })}
       </View>
-      <View style={{flex: 1, marginHorizontal: 10}}>
-        <Button style={{margin: 40}}
+      <View style={{flex: 1, marginHorizontal: '5%'}}>
+        <Button style={{margin: '10%'}}
                 icon='plus' mode='contained' 
                 color='#5c80ac' 
                 labelStyle={{ color: '#cccccc'}} 
@@ -95,7 +104,7 @@ const GalleryScreen = () => {
         </Button>
       </View> 
       <View style={{ flex : 5, 
-                    padding: 5,
+                    padding: '1%',
                     alignItems: 'center' }}>
         <FlatList
           numColumns={2}
@@ -103,13 +112,12 @@ const GalleryScreen = () => {
           keyExtractor={item => guidToString(item.id)}
           renderItem={({item})=>{
             return (
-              <Pressable onPress={() => onFullImage(item)}>
+              <Pressable onPress={() => onFullImage(item.id)}>
                 <Image source={{uri: item.imageUri}} 
-                        style={{ height: 180, width: 180, margin: 5 }}/>
+                        style={{ height: 180, width: 180, margin: '0.8%' }}/>
               </Pressable>
             )
           }}
-          
         />
         <Provider>
           <Portal >
@@ -131,7 +139,7 @@ const GalleryScreen = () => {
                   icon: 'image-plus',
                   color: '#cccccc',
                   style: {backgroundColor: '#5c80ac'},
-                  onPress: () => console.log('Pressed email'),
+                  onPress: () => addPhotoByGallery(),
                   small: false
                 },
               ]}

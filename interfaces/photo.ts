@@ -10,6 +10,8 @@ export interface Photo {
     imageUri: string;
     type: ImageType;
     labels: Guid[];
+    width: number;
+    height: number;
     longitude?: number;
     latitude?: number;
     createDate?: Date;
