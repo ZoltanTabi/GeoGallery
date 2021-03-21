@@ -44,7 +44,7 @@ static void InitializeFlipper(UIApplication *application) {
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
-  [GMSServices provideAPIKey:@"_YOUR_API_KEY_"];
+  [GMSServices provideAPIKey:@"GOOGLE_MAPS_API_KEY"];
   return YES;
 }
 

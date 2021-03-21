@@ -7,7 +7,8 @@
     "ios": "react-native run-ios",
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "postinstall": "patch-package && npx jetify"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.14.1",
@@ -15,6 +16,7 @@
     "@react-navigation/material-bottom-tabs": "^5.3.14",
     "@react-navigation/native": "^5.9.3",
     "guid-typescript": "^1.0.9",
+    "patch-package": "^6.4.7",
     "react": "16.13.1",
     "react-native": "0.63.4",
     "react-native-gesture-handler": "^1.10.3",
