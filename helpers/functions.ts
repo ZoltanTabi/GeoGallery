@@ -9,6 +9,12 @@ export function guidToString(guid: Guid): string {
     return (guid['value'].toString() as string);
 }
 
+export function devConsoleLog(log: any): void {
+    if(__DEV__) {
+        console.log(log);
+    }
+}
+
 // If GUID not good for project, We use id, ang generate with this code
 
 /*export async function generateNewIdForLabels(): Promise<number> {
