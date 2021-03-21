@@ -23,6 +23,7 @@ export interface PhotoState {
 
 export const INIT_PHOTO_STATE = 'INIT_PHOTO_STATE';
 export const ADD_PHOTO = 'ADD_PHOTO';
+export const ADD_MULTIPLE_PHOTO = 'ADD_MULTIPLE_PHOTO';
 export const DELETE_PHOTO = 'DELETE_PHOTO';
 export const ADD_LABEL_TO_PHOTO = 'ADD_LABEL_TO_PHOTO';
 export const REMOVE_LABEL_FROM_PHOTO = 'REMOVE_LABEL_FROM_PHOTO';
@@ -36,6 +37,11 @@ interface InitPhotoStateAction {
 interface AddPhotoAction {
     type: typeof ADD_PHOTO
     payload: Photo
+}
+
+interface AddMultiplePhotoAction {
+    type: typeof ADD_MULTIPLE_PHOTO
+    payload: Photo[]
 }
 
 interface DeletePhotoAction {
@@ -70,6 +76,7 @@ interface RemoveLabelFromAllPhotoAction {
 
 export type PhotoActionTypes = InitPhotoStateAction
                              | AddPhotoAction
+                             | AddMultiplePhotoAction
                              | DeletePhotoAction
                              | AddLabelToPhotoAction
                              | RemoveLabelFromPhotoAction
