@@ -77,15 +77,15 @@ const LabelEditingScreen = (): ReactElement => {
 				flex: 2, 
 				paddingHorizontal: 40, 
 				backgroundColor: '#cccccc'}}>
-				<Text style={{ color: '#ac5c5c', fontSize: 20 }}>
+				<Text style={{ color: '#5c80ac', fontSize: 20 }}>
 					Label name:
 				</Text>
 				<TextInput  
 					mode='outlined' 
-					selectionColor='#ac5c5c' 
+					selectionColor='#5c80ac' 
 					style={{fontSize: 15}}
-					theme={{ colors: { primary: '#ac5c5c', 
-									placeholder: '#ac5c5c', 
+					theme={{ colors: { primary: '#5c80ac', 
+									placeholder: '#5c80ac', 
 									text: 'black', 
 									background: '#cccccc' } }}
 					value={labelObject.text}
@@ -95,7 +95,7 @@ const LabelEditingScreen = (): ReactElement => {
 				flex: 10, 
 				padding: 40, 
 				backgroundColor: '#cccccc'}}>
-				<Text style={{ color: '#ac5c5c', fontSize: 20 }}>
+				<Text style={{ color: '#5c80ac', fontSize: 20 }}>
 					Label color:
 				</Text>
 				<TriangleColorPicker
@@ -112,16 +112,16 @@ const LabelEditingScreen = (): ReactElement => {
 					justifyContent: 'center',
 					backgroundColor: '#cccccc', 
 					paddingHorizontal: '2%'}}>
-				<Button icon='cancel' mode='contained' color='#ac5c5c' style={{marginHorizontal: 2}} labelStyle={{ color: '#cccccc'}}
+				<Button icon='cancel' mode='contained' color='#5c80ac' style={{marginHorizontal: 2}} labelStyle={{ color: '#cccccc'}}
 						onPress={() => onCanceling()}>
 					Cancel
 				</Button>
 				{ propLabel != undefined &&
-				<Button icon='trash-can' mode='contained' color='#ac5c5c' style={{marginHorizontal: 2}} labelStyle={{ color: '#cccccc'}}
+				<Button icon='trash-can' mode='contained' color='#5c80ac' style={{marginHorizontal: 2}} labelStyle={{ color: '#cccccc'}}
 						onPress={() => onDeleting()}>
 					Delete label
 				</Button>}
-				<Button icon='check-bold' mode='contained' color='#ac5c5c' style={{marginHorizontal: 2}} labelStyle={{ color: '#cccccc'}}
+				<Button icon='check-bold' mode='contained' color='#5c80ac' style={{marginHorizontal: 2}} labelStyle={{ color: '#cccccc'}}
 						onPress={() => onConfirming()}>
 					Confirm
 				</Button>

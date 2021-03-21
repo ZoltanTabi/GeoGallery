@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import { Guid } from 'guid-typescript';
-import React, { Children } from 'react';
+import React, { Children, useState } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -14,7 +14,7 @@ import {
   Image,
 } from 'react-native';
 
-import { Button, Chip } from 'react-native-paper';
+import { Button, Chip, Portal, FAB, Provider } from 'react-native-paper';
 import { color } from 'react-native-reanimated';
 
 import {
@@ -35,7 +35,6 @@ import { addMultiplePhoto } from '../storage/actions/photoAction';
 const GalleryScreen = () => {
 
   const dispatch = useDispatch();
-
   const navigation = useNavigation();
 
   const onLabelEditing = (propLabel?: Label) => {
@@ -47,8 +46,11 @@ const GalleryScreen = () => {
   }
 
   const labelState = useSelector((state: RootState) => state.labelState);
-
   const photoState = useSelector((state: RootState) => state.photoState);
+
+  const [state, setState] = React.useState( false );
+  const onStateChange = (open: boolean) => setState( open );
+  const open = state;
 
   /*const pics = () => {
     const photos: Photo[] = [{id: Guid.create(), imageUri: 'https://www.mamaison.com/data/destinations/df/750x640.exact.q85/budapest-lg.jpg?_images_storage', type: ImageType.Gallery, labels: []},
@@ -59,8 +61,9 @@ const GalleryScreen = () => {
   }*/
 
   return (
-    <View style={{flex: 1, margin: 10}}>
+    <View style={{flex: 1}}>
       <View style={{
+            marginTop: 10,
             padding: 5,
             flexDirection: 'row', 
             flexWrap: 'wrap',
@@ -82,10 +85,10 @@ const GalleryScreen = () => {
           );
         })}
       </View>
-      <View style={{flex: 1}}>
+      <View style={{flex: 1, marginHorizontal: 10}}>
         <Button style={{margin: 40}}
                 icon='plus' mode='contained' 
-                color='#ac5c5c' 
+                color='#5c80ac' 
                 labelStyle={{ color: '#cccccc'}} 
                 onPress={() => onLabelEditing()}>
           New label
@@ -108,8 +111,38 @@ const GalleryScreen = () => {
           }}
           
         />
-        </View>
+        <Provider>
+          <Portal >
+            <FAB.Group 
+              fabStyle={{backgroundColor: '#5c80ac'}}
+              color={'#cccccc'}
+              visible={true}
+              open={open}
+              icon={open ? 'dots-horizontal' : 'plus'}
+              actions={[
+                {
+                  icon: 'camera-plus',
+                  color: '#cccccc',
+                  style: {backgroundColor: '#5c80ac'},
+                  onPress: () => console.log('Pressed star'),
+                  small: false
+                },
+                {
+                  icon: 'image-plus',
+                  color: '#cccccc',
+                  style: {backgroundColor: '#5c80ac'},
+                  onPress: () => console.log('Pressed email'),
+                  small: false
+                },
+              ]}
+              onStateChange={(state) => onStateChange(state.open)}
+              onPress={() => {if (open) {}}}
+            />
+          </Portal>
+        </Provider>
+      </View>
     </View>
+    
   );
 };
 
