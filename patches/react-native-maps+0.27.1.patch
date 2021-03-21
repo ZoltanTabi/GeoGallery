@@ -1,0 +1,50 @@
+diff --git a/node_modules/react-native-maps/lib/components/Geojson.js b/node_modules/react-native-maps/lib/components/Geojson.js
+b/node_modules/react-native-maps/lib/components/Geojson.js
+import React from 'react';
+import Marker from './MapMarker';
+import Polyline from './MapPolyline';
+import Polygon from './MapPolygon';
+ 
+ export const makeOverlays = features => {
+   const points = features
+	const Geojson = props => {
+       {overlays.map((overlay, index) => {
+         if (overlay.type === 'point') {
+           return (
+            <Marker
+               key={index}
+               coordinate={overlay.coordinates}
+               pinColor={props.color}
+	const Geojson = props => {
+         }
+         if (overlay.type === 'polygon') {
+           return (
+            <Polygon
+               key={index}
+               coordinates={overlay.coordinates}
+               holes={overlay.holes}
+		const Geojson = props => {
+         }
+         if (overlay.type === 'polyline') {
+           return (
+           <Polyline
+               key={index}
+               coordinates={overlay.coordinates}
+               strokeColor={props.strokeColor}
+diff --git a/node_modules/react-native-maps/lib/components/MapPolygon.js b/node_modules/react-native-maps/lib/components/MapPolygon.js
+b/node_modules/react-native-maps/lib/components/MapPolygon.js
+import decorateMapComponent, {
+   USES_DEFAULT_IMPLEMENTATION,
+   SUPPORTED,
+ } from './decorateMapComponent';
+import * as ProviderConstants from './ProviderConstants';
+ 
+ const viewPropTypes = ViewPropTypes || View.propTypes;
+	class MapPolygon extends React.Component {
+           this.polygon = ref;
+         }}
+         onLayout={
+			this.context.provider === ProviderConstants.PROVIDER_GOOGLE
+             ? this.updateNativeProps()
+             : undefined
+         }
