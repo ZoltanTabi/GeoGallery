@@ -12,10 +12,13 @@ jobs:
       - name: Install npm dependencies
         run: |
           npm install
-      - name: Replace API key
+      - name: Replace API key in AndroidManifest
         run: |
           perl -pi -e 's/GOOGLE_MAPS_API_KEY/"$ENV{TOKEN}"/' ./android/app/src/main/AndroidManifest.xml 
-            &&
+          env:
+            TOKEN: ${{ secrets.GOOGLE_MAP_API_KEY }}
+      - name: Replace API key in google_maps_api.xml
+        run: |
           perl -pi -e 's/GOOGLE_MAPS_API_KEY/"$ENV{TOKEN}"/' ./android/app/src/main/res/values/google_maps_api.xml
           env:
             TOKEN: ${{ secrets.GOOGLE_MAP_API_KEY }}
