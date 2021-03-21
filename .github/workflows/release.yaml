@@ -22,15 +22,15 @@ jobs:
         run: |
           cd android && chmod +x ./gradlew && ./gradlew assembleRelease
       - name: Upload Artifact
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
-          name: GeoGallery.apk
-          path: android
+          name: artifact
+          path: ${{ github.workspace }}/android
       - name: Upload apk to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: android/GeoGallery.apk
+          file: ${{ github.workspace }}/android/app/build/outputs/apk/release/app-release.apk
           asset_name: GeoGallery.apk
           tag: ${{ github.ref }}
           overwrite: true
@@ -38,7 +38,7 @@ jobs:
       - name: Remove File
         uses: JesseTG/rm@v1.0.2
         with:
-          path: android/GeoGallery.apk
+          path: ${{ github.workspace }}/android
          
   build-ios:
     runs-on: [self-hosted, macos]
