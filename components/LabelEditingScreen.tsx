@@ -69,7 +69,7 @@ const LabelEditingScreen = (): ReactElement => {
 				<Chip style={{ 
 						flexDirection: 'row', 
 						backgroundColor: labelObject.color}}
-					textStyle={{ color:'white',fontSize: 20, }}
+					textStyle={{ color:'white',fontSize: 15, }}
 					mode='flat' 
 					children={labelObject.text} />
 			</View>
@@ -77,7 +77,7 @@ const LabelEditingScreen = (): ReactElement => {
 				flex: 2, 
 				paddingHorizontal: 40, 
 				backgroundColor: '#cccccc'}}>
-				<Text style={{ color: '#ac5c5c', fontSize: 24 }}>
+				<Text style={{ color: '#ac5c5c', fontSize: 20 }}>
 					Label name:
 				</Text>
 				<TextInput  
@@ -95,7 +95,7 @@ const LabelEditingScreen = (): ReactElement => {
 				flex: 10, 
 				padding: 40, 
 				backgroundColor: '#cccccc'}}>
-				<Text style={{ color: '#ac5c5c', fontSize: 24 }}>
+				<Text style={{ color: '#ac5c5c', fontSize: 20 }}>
 					Label color:
 				</Text>
 				<TriangleColorPicker
@@ -112,16 +112,16 @@ const LabelEditingScreen = (): ReactElement => {
 					justifyContent: 'center',
 					backgroundColor: '#cccccc', 
 					paddingHorizontal: '2%'}}>
-				<Button icon='cancel' mode='contained' color='#ac5c5c' style={{marginHorizontal: 5}} labelStyle={{ color: '#cccccc'}}
+				<Button icon='cancel' mode='contained' color='#ac5c5c' style={{marginHorizontal: 2}} labelStyle={{ color: '#cccccc'}}
 						onPress={() => onCanceling()}>
 					Cancel
 				</Button>
 				{ propLabel != undefined &&
-				<Button icon='trash-can' mode='contained' color='#ac5c5c' style={{marginHorizontal: 5}} labelStyle={{ color: '#cccccc'}}
+				<Button icon='trash-can' mode='contained' color='#ac5c5c' style={{marginHorizontal: 2}} labelStyle={{ color: '#cccccc'}}
 						onPress={() => onDeleting()}>
 					Delete label
 				</Button>}
-				<Button icon='check-bold' mode='contained' color='#ac5c5c' style={{marginHorizontal: 5}} labelStyle={{ color: '#cccccc'}}
+				<Button icon='check-bold' mode='contained' color='#ac5c5c' style={{marginHorizontal: 2}} labelStyle={{ color: '#cccccc'}}
 						onPress={() => onConfirming()}>
 					Confirm
 				</Button>

@@ -37,6 +37,8 @@ const GalleryScreen = () => {
 
   const labelState = useSelector((state: RootState) => state.labelState);
 
+  const photoState = useSelector((state: RootState) => state.photoState);
+
   return (
     <View style={{flex: 1, margin: 10}}>
       <View style={{
@@ -68,6 +70,13 @@ const GalleryScreen = () => {
                 labelStyle={{ color: '#cccccc'}} 
                 onPress={() => onLabelEditing()}>
           New label
+        </Button>
+        <Button style={{margin: 40}}
+                icon='plus' mode='contained' 
+                color='#ac5c5c' 
+                labelStyle={{ color: '#cccccc'}} 
+                onPress={() => onLabelEditing()}>
+          add pictures
         </Button>
       </View>      
       <View style={{ flex : 6, justifyContent: 'center', alignItems: 'center' }}>
