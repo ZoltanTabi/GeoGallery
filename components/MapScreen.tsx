@@ -27,8 +27,8 @@ const MapScreen = (): ReactElement => {
   return (
     <View style={styles.container}>
       <MapView
-        onMapReady={onMapReady}
         provider={PROVIDER_GOOGLE}
+        onMapReady={onMapReady}
         style={styles.map}
         region={region}
         onRegionChangeComplete={onRegionChangeComplete}
