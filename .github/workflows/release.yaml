@@ -41,7 +41,7 @@ jobs:
           path: ${{ github.workspace }}/android
          
   build-ios:
-    runs-on: [self-hosted, macos]
+    runs-on: macos-latest
     steps: 
       - uses: actions/checkout@v2
       - name: Install npm dependencies
@@ -58,14 +58,14 @@ jobs:
           include: "ios/GeoGallery/"
       - name: Build app
         run: |       
-          xcodebuild -workspace myapp.xcworkspace -scheme myapp archive -archivePath myapp.xcarchive -allowProvisioningUpdates
-          xcodebuild -exportArchive -archivePath ./myapp.xcarchive -exportPath . -exportOptionsPlist myapp/Info.plist
-          mv myapp.ipa ../myapp.ipa
+          xcodebuild -workspace GeoGallery.xcworkspace -scheme GeoGallery archive -archivePath GeoGallery.xcarchive -allowProvisioningUpdates
+          xcodebuild -exportArchive -archivePath ./GeoGallery.xcarchive -exportPath . -exportOptionsPlist GeoGallery/Info.plist
+          mv GeoGallery.ipa ../GeoGallery.ipa
       - name: Upload Artifact
         uses: actions/upload-artifact@v1
         with:
-          name: GeoGallery.ipa
-          path: ios
+          name: artifact
+          path: ${{ github.workspace }}/ios
       - name: Upload ipa to release
         uses: svenstaro/upload-release-action@v2
         with:
@@ -78,5 +78,5 @@ jobs:
       - name: Remove File
         uses: JesseTG/rm@v1.0.2
         with:
-          path: ios/GeoGallery.ipa
+          path: ${{ github.workspace }}/ios
        
