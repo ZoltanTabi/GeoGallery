@@ -3,6 +3,7 @@ import {
     PhotoState,
     INIT_PHOTO_STATE,
     ADD_PHOTO,
+    ADD_MULTIPLE_PHOTO,
     DELETE_PHOTO,
     ADD_LABEL_TO_PHOTO,
     REMOVE_LABEL_FROM_PHOTO,
@@ -45,6 +46,13 @@ export function addPhotoFromCamera(id: Guid, base64Encoded: string): PhotoAction
         type: ADD_PHOTO,
         payload: newPhoto
     }*/
+}
+
+export function addMultiplePhoto(photos: Photo[]): PhotoActionTypes {
+    return {
+        type: ADD_MULTIPLE_PHOTO,
+        payload: photos
+    }
 }
 
 /**

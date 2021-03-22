@@ -4,6 +4,7 @@ import {
     PhotoState,
     INIT_PHOTO_STATE,
     ADD_PHOTO,
+    ADD_MULTIPLE_PHOTO,
     DELETE_PHOTO,
     ADD_LABEL_TO_PHOTO,
     REMOVE_LABEL_FROM_PHOTO,
@@ -28,6 +29,15 @@ export function photoReducer(state = initialState, action: PhotoActionTypes): Ph
         case ADD_PHOTO:
         {
             state.photos.push(action.payload);
+            storePhotoState(state);
+
+            return {
+                photos: state.photos
+            };
+        }
+        case ADD_MULTIPLE_PHOTO:
+        {
+            state.photos.push(...action.payload);
             storePhotoState(state);
 
             return {

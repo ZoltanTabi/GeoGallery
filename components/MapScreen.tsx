@@ -1,5 +1,5 @@
 import React, { ReactElement, useState } from 'react';
-import { PermissionsAndroid, StyleSheet, View } from 'react-native';
+import { Image, PermissionsAndroid, StyleSheet, View } from 'react-native';
 import MapView, { Region, PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import { useSelector } from 'react-redux';
 import { devConsoleLog, guidToString } from '../helpers/functions';
@@ -22,7 +22,6 @@ const MapScreen = (): ReactElement => {
   } 
   
   const photoState = useSelector((state: RootState) => state.photoState);
-  devConsoleLog(photoState);
   
   return (
     <View style={styles.container}>
@@ -41,8 +40,11 @@ const MapScreen = (): ReactElement => {
             <Marker
               key={guidToString(item.id)}
               coordinate={{latitude: item.latitude as number, longitude: item.longitude as number}}
-              image={{uri: item.imageUri}}
-            ></Marker>
+            >
+              <Image source={{uri: item.imageUri}}
+                style={{width: 60, height: 60}}
+                resizeMode="contain" />
+            </Marker>
           );
       })}
       </MapView>

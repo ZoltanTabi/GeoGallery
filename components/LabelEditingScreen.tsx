@@ -6,21 +6,27 @@ import { TriangleColorPicker, fromHsv } from 'react-native-color-picker';
 import { Text, TextInput, Chip, Button  } from 'react-native-paper';
 import { Label } from '../interfaces/label';
 import { createLabel, deleteLabel, updateLabel } from '../storage/actions/labelAction';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { commonDeleteLabel } from '../storage/actions/commonAction';
+import { RootState } from '../storage';
+import { guidToString } from '../helpers/functions';
 
 const LabelEditingScreen = (): ReactElement => {
 
 	const dispatch = useDispatch();
-
+	
 	const windowHeight = useWindowDimensions().height;
 
-	const route = useRoute<RouteProp<{ params: { propLabel: Label } }, 'params'>>();
+	const route = useRoute<RouteProp<{ params: { id: string } }, 'params'>>();
 
-	const propLabel = route.params?.propLabel;
+	const id = route.params?.id;
 
-	const initLabel : Label = propLabel != undefined ? propLabel : {id: Guid.create(),text: 'Label', color: 'purple', photos: []}
+	const labelState = useSelector((state: RootState) => state.labelState);
+
+	const initLabel : Label = id != "" 
+							? (labelState.labels.find((label) => guidToString(label.id) == route.params.id)as Label) 
+							: {id: Guid.create(),text: 'Label', color: 'purple', photos: []}
 
 	const [labelObject, changeObject] = useState<Label>(initLabel);
 
@@ -35,7 +41,7 @@ const LabelEditingScreen = (): ReactElement => {
 	const navigation = useNavigation();
 
   	const onConfirming = () => {
-		if(propLabel == undefined)
+		if(id == "")
 		{
 			dispatch(createLabel(labelObject));
 		}
@@ -69,23 +75,25 @@ const LabelEditingScreen = (): ReactElement => {
 				<Chip style={{ 
 						flexDirection: 'row', 
 						backgroundColor: labelObject.color}}
-					textStyle={{ color:'white',fontSize: 20, }}
+					textStyle={{ color:'white',fontSize: 15, }}
 					mode='flat' 
 					children={labelObject.text} />
 			</View>
 			<View style={{ 
 				flex: 2, 
-				paddingHorizontal: 40, 
+				paddingHorizontal: '10%', 
 				backgroundColor: '#cccccc'}}>
-				<Text style={{ color: '#ac5c5c', fontSize: 24 }}>
+				<Text style={{ color: '#5c80ac', fontSize: 18 }}>
 					Label name:
 				</Text>
 				<TextInput  
 					mode='outlined' 
-					selectionColor='#ac5c5c' 
-					style={{fontSize: 20}}
-					theme={{ colors: { primary: '#ac5c5c', 
-									placeholder: '#ac5c5c', 
+					selectionColor='#5c80ac' 
+					style={{fontSize: 15,
+							height: 45,
+							justifyContent: 'center'}}
+					theme={{ colors: { primary: '#5c80ac', 
+									placeholder: '#5c80ac', 
 									text: 'black', 
 									background: '#cccccc' } }}
 					value={labelObject.text}
@@ -93,35 +101,39 @@ const LabelEditingScreen = (): ReactElement => {
 			</View>
 			<View style={{ 
 				flex: 10, 
-				padding: 40, 
+				paddingTop: '10%',
+				paddingHorizontal: '10%', 
 				backgroundColor: '#cccccc'}}>
-				<Text style={{ color: '#ac5c5c', fontSize: 24 }}>
+				<Text style={{ color: '#5c80ac', fontSize: 18 }}>
 					Label color:
 				</Text>
 				<TriangleColorPicker
 					hideControls={true} 
-					style={{ flex: 1 }} 
+					style={{ flex: 1}} 
 					oldColor={labelObject.color}
 					onColorChange={(changedColor => onColorChange(fromHsv(changedColor)))}/>
 			</View>
 			<View style={{ 
-					flex: 3, 
+					flex: 3.5, 
 					flexDirection: 'row', 
 					flexWrap: 'wrap',
 					alignItems: 'center', 
 					justifyContent: 'center',
 					backgroundColor: '#cccccc', 
 					paddingHorizontal: '2%'}}>
-				<Button icon='cancel' mode='contained' color='#ac5c5c' style={{marginHorizontal: 5}} labelStyle={{ color: '#cccccc'}}
+				<Button icon='cancel' mode='contained' color='#5c80ac' style={{marginHorizontal: '0.5%'}} 
+						labelStyle={{ color: '#cccccc', fontSize: 12}}
 						onPress={() => onCanceling()}>
 					Cancel
 				</Button>
-				{ propLabel != undefined &&
-				<Button icon='trash-can' mode='contained' color='#ac5c5c' style={{marginHorizontal: 5}} labelStyle={{ color: '#cccccc'}}
+				{ id != "" &&
+				<Button icon='trash-can' mode='contained' color='#5c80ac' style={{marginHorizontal: '0.5%'}} 
+						labelStyle={{ color: '#cccccc', fontSize: 12}}
 						onPress={() => onDeleting()}>
-					Delete label
+					Delete
 				</Button>}
-				<Button icon='check-bold' mode='contained' color='#ac5c5c' style={{marginHorizontal: 5}} labelStyle={{ color: '#cccccc'}}
+				<Button icon='check-bold' mode='contained' color='#5c80ac' style={{marginHorizontal: '0.5%'}} 
+						labelStyle={{ color: '#cccccc', fontSize: 12}}
 						onPress={() => onConfirming()}>
 					Confirm
 				</Button>

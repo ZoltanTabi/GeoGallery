@@ -50,6 +50,7 @@ import { initState } from './storage/actions/commonAction';
 import LabelEditingScreen from './components/LabelEditingScreen';
 import { createStackNavigator } from '@react-navigation/stack';
 import { color } from 'react-native-reanimated';
+import FullImageScreen from './components/FullImageScreen';
 
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -66,7 +67,7 @@ const NavBar = () => {
       initialRouteName="GalleryScreen"
       activeColor="#cccccc"
       inactiveColor="#333333"
-      barStyle={{ backgroundColor: '#ac5c5c' }}
+      barStyle={{ backgroundColor: '#5c80ac' }}
       shifting={true}
     >
       <Tab.Screen
@@ -74,7 +75,7 @@ const NavBar = () => {
         component={GalleryScreen}
         options={{
           tabBarLabel: 'Gallery',
-          tabBarColor: '#ac5c5c',
+          tabBarColor: '#5c80ac',
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="camera-burst" color={color} size={26} />
           ),
@@ -88,17 +89,6 @@ const NavBar = () => {
           tabBarLabel: 'Map',
           tabBarIcon: ({ color }) => (
             <MaterialCommunityIcons name="map" color={color} size={26} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="CameraScreen"
-        component={CameraScreen}
-        options={{
-          tabBarColor: '#5c80ac',
-          tabBarLabel: 'Camera',
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="camera-plus" color={color} size={26} />
           ),
         }}
       />
@@ -158,7 +148,11 @@ export default function App() {
             <Stack.Screen name="Editing label" component={LabelEditingScreen} 
                           options={{
                             headerTintColor: '#cccccc',
-                            headerStyle: { backgroundColor: '#ac5c5c' }
+                            headerStyle: { backgroundColor: '#5c80ac' }
+                          }}/>
+            <Stack.Screen name="Full image" component={FullImageScreen} 
+                          options={{
+                            headerShown: false
                           }}/>
           </Stack.Navigator>
         </NavigationContainer>
