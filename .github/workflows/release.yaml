@@ -40,40 +40,40 @@ jobs:
         with:
           name: android-artifact
           
-  build-ios:
-    runs-on: macos-latest
-    steps: 
-      - uses: actions/checkout@v2
-      - name: Install npm dependencies
-        run: |
-          npm install
-      - name: Install pod dependencies
-        run: |
-          cd ios && pod install
-      - name: Replace API key
-        run: |
-          sed -i -- 's/GOOGLE_MAPS_API_KEY/"$ENV{TOKEN}"/g' ios/GeoGallery/AppDelegate.m
-          env:
-            TOKEN: ${{ secrets.GOOGLE_MAP_API_KEY }}
-      - name: Build app
-        run: |       
-          xcodebuild -workspace GeoGallery.xcworkspace -scheme GeoGallery archive -archivePath GeoGallery.xcarchive -allowProvisioningUpdates
-          xcodebuild -exportArchive -archivePath ./GeoGallery.xcarchive -exportPath . -exportOptionsPlist GeoGallery/Info.plist
-          mv GeoGallery.ipa ../GeoGallery.ipa
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: ios-artifact
-          path: ${{ github.workspace }}/ios/build
-      - name: Upload ipa to release
-        uses: svenstaro/upload-release-action@v2
-        with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{ github.workspace }}/ios/build/GeoGallery.ipa
-          asset_name: GeoGallery.ipa
-          tag: ${{ github.ref }}
-          overwrite: true
-          body: "IOS ipa file"
+  #build-ios:
+  #  runs-on: macos-latest
+  #  steps: 
+  #   - uses: actions/checkout@v2
+  #    - name: Install npm dependencies
+  #      run: |
+  #        npm install
+  #    - name: Install pod dependencies
+  #      run: |
+  #        cd ios && pod install
+  #    - name: Replace API key
+  #      run: |
+  #        sed -i -- 's/GOOGLE_MAPS_API_KEY/"$ENV{TOKEN}"/g' ios/GeoGallery/AppDelegate.m
+  #        env:
+  #          TOKEN: ${{ secrets.GOOGLE_MAP_API_KEY }}
+  #    - name: Build app
+  #      run: |       
+  #        xcodebuild -workspace GeoGallery.xcworkspace -scheme GeoGallery archive -archivePath GeoGallery.xcarchive -allowProvisioningUpdates
+  #        xcodebuild -exportArchive -archivePath ./GeoGallery.xcarchive -exportPath . -exportOptionsPlist GeoGallery/Info.plist
+  #        mv GeoGallery.ipa ../GeoGallery.ipa
+  #    - name: Upload Artifact
+  #      uses: actions/upload-artifact@v2
+  #      with:
+  #        name: ios-artifact
+  #        path: ${{ github.workspace }}/ios/build
+  #    - name: Upload ipa to release
+  #      uses: svenstaro/upload-release-action@v2
+  #      with:
+  #        repo_token: ${{ secrets.GITHUB_TOKEN }}
+  #        file: ${{ github.workspace }}/ios/build/GeoGallery.ipa
+  #        asset_name: GeoGallery.ipa
+  #        tag: ${{ github.ref }}
+  #        overwrite: true
+  #        body: "IOS ipa file"
           
   #remove-artifacts:
   #  needs: [build-android, build-ios]
