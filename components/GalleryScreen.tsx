@@ -27,7 +27,8 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { guidToString } from '../helpers/functions';
+import { getLatLongFromExif } from '../helpers/exifDataReader';
+import { devConsoleLog, guidToString } from '../helpers/functions';
 import { Label } from '../interfaces/label';
 import { ImageType, Photo } from '../interfaces/photo';
 import { RootState } from '../storage';
@@ -59,9 +60,10 @@ const GalleryScreen = () => {
       includeExif: true,
       includeBase64: true
     }).then(image => {
-      console.log(image.exif);
+      const latLong = getLatLongFromExif(image.exif);
+
       dispatch(addPhotoFromGallery({id: Guid.create(), imageUri: `data:${image.mime};base64,${image.data}`, type: ImageType.Gallery,
-                                  labels: [], height: image.height, width: image.width}))
+                                  labels: [], height: image.height, width: image.width, latitude: latLong ? latLong.lat : undefined, longitude: latLong ? latLong.lng : undefined}))
     }).catch(error => console.log(error));
   }
 
@@ -74,8 +76,10 @@ const GalleryScreen = () => {
       }).then(images => {
         const photos: Photo[] = []
         images.forEach(image => {
+          const latLong = getLatLongFromExif(image.exif);
+
           photos.push({id: Guid.create(), imageUri: `data:${image.mime};base64,${image.data}`, type: ImageType.Gallery,
-                      labels: [], height: image.height, width: image.width})
+                      labels: [], height: image.height, width: image.width, latitude: latLong ? latLong.lat : undefined, longitude: latLong ? latLong.lng : undefined})
         });
         dispatch(addMultiplePhoto(photos));
     }).catch(error => console.log(error));
