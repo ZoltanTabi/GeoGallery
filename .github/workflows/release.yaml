@@ -24,8 +24,8 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: artifact
-          path: ${{ github.workspace }}/android
+          name: android-artifact
+          path: ${{ github.workspace }}/android/app/build/outputs/apk/release/app-release.apk
       - name: Upload apk to release
         uses: svenstaro/upload-release-action@v2
         with:
@@ -35,11 +35,11 @@ jobs:
           tag: ${{ github.ref }}
           overwrite: true
           body: "Android apk file"
-      #- name: Remove File
-      #  uses: JesseTG/rm@v1.0.2
-      #  with:
-      #    path: ${{ github.workspace }}/android
-         
+      - name: Delete artifact
+        uses: geekyeggo/delete-artifact@v1
+        with:
+          name: android-artifact
+          
   build-ios:
     runs-on: macos-latest
     steps: 
@@ -52,7 +52,7 @@ jobs:
           cd ios && pod install
       - name: Replace API key
         run: |
-          sed -i.bu 's/GOOGLE_MAPS_API_KEY/"$ENV{TOKEN}"/' ios/GeoGallery/AppDelegate.m
+          sed -i "s/GOOGLE_MAPS_API_KEY/"$ENV{TOKEN}"/g" ios/GeoGallery/AppDelegate.m
           env:
             TOKEN: ${{ secrets.GOOGLE_MAP_API_KEY }}
       - name: Build app
@@ -63,8 +63,8 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: artifact
-          path: ${{ github.workspace }}/ios
+          name: ios-artifact
+          path: ${{ github.workspace }}/ios/build
       - name: Upload ipa to release
         uses: svenstaro/upload-release-action@v2
         with:
@@ -74,21 +74,15 @@ jobs:
           tag: ${{ github.ref }}
           overwrite: true
           body: "IOS ipa file"
-      #- name: Remove File
-      #  uses: JesseTG/rm@v1.0.2
-      #  with:
-      #    path: ${{ github.workspace }}/ios
           
-  remove-files:
-    needs: [build-android, build-ios]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Remove android files
-        uses: JesseTG/rm@v1.0.2
-        with:
-          path: ${{ github.workspace }}/android
-      - name: Remove ios files
-        uses: JesseTG/rm@v1.0.2
-        with:
-          path: ${{ github.workspace }}/ios
+  #remove-artifacts:
+  #  needs: [build-android, build-ios]
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #    - name: Delete artifacts
+  #      uses: geekyeggo/delete-artifact@v1
+  #      with:
+  #      name: |
+  #          android-artifact
+  #          ios-artifact
        
