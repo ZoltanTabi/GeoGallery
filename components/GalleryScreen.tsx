@@ -39,8 +39,9 @@ const GalleryScreen = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
-  const onLabelEditing = (propLabel?: Label) => {
-    navigation.navigate('Editing label', {propLabel});
+  const onLabelEditing = (propLabel?: Guid) => {
+    const checkId = propLabel ? guidToString(propLabel) : "";
+    navigation.navigate('Editing label', {id: checkId});
   }
 
   const onFullImage = (propPhoto: Guid) => {
@@ -105,7 +106,7 @@ const GalleryScreen = () => {
                 style={{ margin: 4, backgroundColor: item.color }}
                 key={guidToString(item.id)}
                 onPress={() => {}}
-                onLongPress={() => onLabelEditing(item)}
+                onLongPress={() => onLabelEditing(item.id)}
                 />
           );
         })}
