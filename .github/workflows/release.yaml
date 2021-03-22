@@ -21,24 +21,29 @@ jobs:
       - name: Build Android Release
         run: |
           cd android && chmod +x ./gradlew && ./gradlew assembleRelease
+      #- name: Upload Artifact
+      #  uses: actions/upload-artifact@v2
+      #  with:
+      #    name: artifact
+      #    path: ${{ github.workspace }}/android
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: artifact
-          path: ${{ github.workspace }}/android
+          name: app-release.apk
+          path: ${{ github.workspace }}/android/app/build/outputs/apk/release/
       - name: Upload apk to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{ github.workspace }}/android/app/build/outputs/apk/release/app-release.apk
+          file: ${{ github.workspace }}/app-release.apk
           asset_name: GeoGallery.apk
           tag: ${{ github.ref }}
           overwrite: true
           body: "Android apk file"
-      - name: Remove File
-        uses: JesseTG/rm@v1.0.2
-        with:
-          path: ${{ github.workspace }}/android
+      #- name: Remove File
+      #  uses: JesseTG/rm@v1.0.2
+      #  with:
+      #    path: ${{ github.workspace }}/android
          
   build-ios:
     runs-on: macos-latest
@@ -51,32 +56,44 @@ jobs:
         run: |
           cd ios && pod install
       - name: Replace API key
-        uses: jacobtomlinson/gha-find-replace@master
-        with:
-          find: "GOOGLE_MAPS_API_KEY"
-          replace: '${{ secrets.GOOGLE_MAP_API_KEY }}'
-          include: "ios/GeoGallery/"
+        run: |
+          perl -pi -e 's/GOOGLE_MAPS_API_KEY/"$ENV{TOKEN}"/' ios/GeoGallery/AppDelegate.m
+          env:
+            TOKEN: ${{ secrets.GOOGLE_MAP_API_KEY }}
       - name: Build app
         run: |       
           xcodebuild -workspace GeoGallery.xcworkspace -scheme GeoGallery archive -archivePath GeoGallery.xcarchive -allowProvisioningUpdates
           xcodebuild -exportArchive -archivePath ./GeoGallery.xcarchive -exportPath . -exportOptionsPlist GeoGallery/Info.plist
           mv GeoGallery.ipa ../GeoGallery.ipa
       - name: Upload Artifact
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v2
         with:
-          name: artifact
-          path: ${{ github.workspace }}/ios
+          name: GeoGallery.ipa
+          path: ${{ github.workspace }}/ios/build
       - name: Upload ipa to release
         uses: svenstaro/upload-release-action@v2
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ios/GeoGallery.ipa
+          file: ${{ github.workspace }}/GeoGallery.ipa
           asset_name: GeoGallery.ipa
           tag: ${{ github.ref }}
           overwrite: true
           body: "IOS ipa file"
-      - name: Remove File
+      #- name: Remove File
+      #  uses: JesseTG/rm@v1.0.2
+      #  with:
+      #    path: ${{ github.workspace }}/ios
+          
+  remove-files:
+    needs: [build-android, build-ios]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Remove android apk
         uses: JesseTG/rm@v1.0.2
         with:
-          path: ${{ github.workspace }}/ios
+          path: ${{ github.workspace }}/app-release.apk
+      - name: Remove ios ipa
+        uses: JesseTG/rm@v1.0.2
+        with:
+          path: ${{ github.workspace }}/GeoGallery.ipa
        
