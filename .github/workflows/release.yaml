@@ -1,0 +1,88 @@
+name: Publish
+
+on:
+  release:
+    types: [created]
+    
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps: 
+      - uses: actions/checkout@v2
+      - name: Install npm dependencies
+        run: |
+          npm install
+      - name: Replace API key
+        uses: jacobtomlinson/gha-find-replace@master
+        with:
+          find: "GOOGLE_MAPS_API_KEY"
+          replace: '${{ secrets.GOOGLE_MAP_API_KEY }}'
+          include: "android/app/src/main/"
+      - name: Build Android Release
+        run: |
+          cd android && chmod +x ./gradlew && ./gradlew assembleRelease
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: android-artifact
+          path: ${{ github.workspace }}/android/app/build/outputs/apk/release/app-release.apk
+      - name: Upload apk to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ github.workspace }}/android/app/build/outputs/apk/release/app-release.apk
+          asset_name: GeoGallery.apk
+          tag: ${{ github.ref }}
+          overwrite: true
+          body: "Android apk file"
+      - name: Delete artifact
+        uses: geekyeggo/delete-artifact@v1
+        with:
+          name: android-artifact
+          
+  #build-ios:
+  #  runs-on: macos-latest
+  #  steps: 
+  #   - uses: actions/checkout@v2
+  #    - name: Install npm dependencies
+  #      run: |
+  #        npm install
+  #    - name: Install pod dependencies
+  #      run: |
+  #        cd ios && pod install
+  #    - name: Replace API key
+  #      run: |
+  #        sed -i -- 's/GOOGLE_MAPS_API_KEY/"$ENV{TOKEN}"/g' ios/GeoGallery/AppDelegate.m
+  #        env:
+  #          TOKEN: ${{ secrets.GOOGLE_MAP_API_KEY }}
+  #    - name: Build app
+  #      run: |       
+  #        xcodebuild -workspace GeoGallery.xcworkspace -scheme GeoGallery archive -archivePath GeoGallery.xcarchive -allowProvisioningUpdates
+  #        xcodebuild -exportArchive -archivePath ./GeoGallery.xcarchive -exportPath . -exportOptionsPlist GeoGallery/Info.plist
+  #        mv GeoGallery.ipa ../GeoGallery.ipa
+  #    - name: Upload Artifact
+  #      uses: actions/upload-artifact@v2
+  #      with:
+  #        name: ios-artifact
+  #        path: ${{ github.workspace }}/ios/build
+  #    - name: Upload ipa to release
+  #      uses: svenstaro/upload-release-action@v2
+  #      with:
+  #        repo_token: ${{ secrets.GITHUB_TOKEN }}
+  #        file: ${{ github.workspace }}/ios/build/GeoGallery.ipa
+  #        asset_name: GeoGallery.ipa
+  #        tag: ${{ github.ref }}
+  #        overwrite: true
+  #        body: "IOS ipa file"
+          
+  #remove-artifacts:
+  #  needs: [build-android, build-ios]
+  #  runs-on: ubuntu-latest
+  #  steps:
+  #    - name: Delete artifacts
+  #      uses: geekyeggo/delete-artifact@v1
+  #      with:
+  #      name: |
+  #          android-artifact
+  #          ios-artifact
+       
