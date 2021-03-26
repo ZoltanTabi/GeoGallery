@@ -1,10 +1,9 @@
-import { Guid } from "guid-typescript";
 
 export interface Label {
-    id: Guid;
+    id: string;
     text: string;
     color: string;
-    photos: Guid[];
+    photos: string[];
 }
 
 export interface LabelState {
@@ -37,30 +36,30 @@ interface UpdateLabelAction {
 interface DeleteLabelAction {
     type: typeof DELETE_LABEL
     payload: {
-        id: Guid
+        id: string
     }
 }
 
 interface AddPhotoToLabelAction {
     type: typeof ADD_PHOTO_TO_LABEL
     payload: {
-        photoId: Guid
-        labelId: Guid
+        photoId: string
+        labelId: string
     }
 }
 
 interface RemovePhotoFromLabelAction {
     type: typeof REMOVE_PHOTO_FROM_LABEL
     payload: {
-        photoId: Guid
-        labelId: Guid
+        photoId: string
+        labelId: string
     }
 }
 
 interface RemovePhotoFromAllLabelAction {
     type: typeof REMOVE_PHOTO_FROM_ALL_LABEL
     payload: {
-        photoId: Guid
+        photoId: string
     }
 }
 

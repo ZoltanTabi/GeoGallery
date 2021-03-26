@@ -1,5 +1,4 @@
 import { useNavigation } from '@react-navigation/native';
-import { Guid } from 'guid-typescript';
 import React, { ReactElement, useState } from 'react';
 import { View, useWindowDimensions, } from 'react-native';
 import { TriangleColorPicker, fromHsv } from 'react-native-color-picker';
@@ -10,7 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useRoute, RouteProp } from '@react-navigation/native';
 import { commonDeleteLabel } from '../storage/actions/commonAction';
 import { RootState } from '../storage';
-import { guidToString } from '../helpers/functions';
+import { getNewId } from '../helpers/functions';
 
 const LabelEditingScreen = (): ReactElement => {
 
@@ -25,8 +24,8 @@ const LabelEditingScreen = (): ReactElement => {
 	const labelState = useSelector((state: RootState) => state.labelState);
 
 	const initLabel : Label = id != "" 
-							? (labelState.labels.find((label) => guidToString(label.id) == route.params.id)as Label) 
-							: {id: Guid.create(),text: 'Label', color: 'purple', photos: []}
+							? (labelState.labels.find((label) => label.id == route.params.id)as Label) 
+							: {id: getNewId(),text: 'Label', color: 'purple', photos: []}
 
 	const [labelObject, changeObject] = useState<Label>(initLabel);
 

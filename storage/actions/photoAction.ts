@@ -10,7 +10,6 @@ import {
     REMOVE_LABEL_FROM_ALL_PHOTO,
     PhotoActionTypes
 } from '../../interfaces/photo';
-import { Guid } from 'guid-typescript';
 import { getData } from '../asyncStorage';
 import { StateEnum } from '../../enums/stateEnum';
 import { Dispatch } from 'redux';
@@ -39,7 +38,7 @@ export function addPhotoFromGallery(photo: Photo): PhotoActionTypes {
     }
 }
 
-export function addPhotoFromCamera(id: Guid, base64Encoded: string): PhotoActionTypes {
+export function addPhotoFromCamera(id: string, base64Encoded: string): PhotoActionTypes {
     throw('addPhotoFromCamera action is not implemented!');
     /*const newPhoto: Photo = {  };
     return {
@@ -58,7 +57,7 @@ export function addMultiplePhoto(photos: Photo[]): PhotoActionTypes {
 /**
  * @description Don't use this action! Use commonDeletePhoto.
  */
-export function deletePhoto(id: Guid): PhotoActionTypes {
+export function deletePhoto(id: string): PhotoActionTypes {
     return {
         type: DELETE_PHOTO,
         payload: {
@@ -70,7 +69,7 @@ export function deletePhoto(id: Guid): PhotoActionTypes {
 /**
  * @description Don't use this action! Use commonDeletePhoto.
  */
-export function deletePhotoFromImageStore(id: Guid, uri: string) {
+export function deletePhotoFromImageStore(id: string, uri: string) {
     throw('deletePhotoFromImageStore action is not implemented!');
     return (dispatch: Dispatch<any>) => {
         // GetData change to delete from ImageStore
@@ -84,7 +83,7 @@ export function deletePhotoFromImageStore(id: Guid, uri: string) {
 /**
  * @description Don't use this action! Use commonAddLabelToPhoto.
  */
-export function addLabelToPhoto(photoId: Guid, labelId: Guid): PhotoActionTypes {
+export function addLabelToPhoto(photoId: string, labelId: string): PhotoActionTypes {
     return {
         type: ADD_LABEL_TO_PHOTO,
         payload: {
@@ -97,7 +96,7 @@ export function addLabelToPhoto(photoId: Guid, labelId: Guid): PhotoActionTypes 
 /**
  * @description Don't use this action! Use commonRemoveLabelFromPhoto.
  */
-export function removeLabelFromPhoto(photoId: Guid, labelId: Guid): PhotoActionTypes {
+export function removeLabelFromPhoto(photoId: string, labelId: string): PhotoActionTypes {
     return {
         type: REMOVE_LABEL_FROM_PHOTO,
         payload: {
@@ -110,7 +109,7 @@ export function removeLabelFromPhoto(photoId: Guid, labelId: Guid): PhotoActionT
 /**
  * @description Don't use this action! Use commonDeleteLabel.
  */
-export function removeLabelFromAllPhoto(labelId: Guid): PhotoActionTypes {
+export function removeLabelFromAllPhoto(labelId: string): PhotoActionTypes {
     return {
         type: REMOVE_LABEL_FROM_ALL_PHOTO,
         payload: {

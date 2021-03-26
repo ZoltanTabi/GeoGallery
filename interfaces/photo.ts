@@ -1,4 +1,3 @@
-import { Guid } from "guid-typescript";
 
 export enum ImageType {
     Camera = 1,
@@ -6,10 +5,10 @@ export enum ImageType {
 }
 
 export interface Photo {
-    id: Guid;
+    id: string;
     imageUri: string;
     type: ImageType;
-    labels: Guid[];
+    labels: string[];
     width: number;
     height: number;
     longitude?: number;
@@ -49,30 +48,30 @@ interface AddMultiplePhotoAction {
 interface DeletePhotoAction {
     type: typeof DELETE_PHOTO
     payload: {
-        id: Guid
+        id: string
     }
 }
 
 interface AddLabelToPhotoAction {
     type: typeof ADD_LABEL_TO_PHOTO
     payload: {
-        photoId: Guid
-        labelId: Guid
+        photoId: string
+        labelId: string
     }
 }
 
 interface RemoveLabelFromPhotoAction {
     type: typeof REMOVE_LABEL_FROM_PHOTO
     payload: {
-        photoId: Guid
-        labelId: Guid
+        photoId: string
+        labelId: string
     }
 }
 
 interface RemoveLabelFromAllPhotoAction {
     type: typeof REMOVE_LABEL_FROM_ALL_PHOTO
     payload: {
-        labelId: Guid
+        labelId: string
     }
 }
 

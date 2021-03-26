@@ -1,5 +1,4 @@
 import { useNavigation } from '@react-navigation/native';
-import { Guid } from 'guid-typescript';
 import React, { Children, useState } from 'react';
 import {
   SafeAreaView,
@@ -28,7 +27,7 @@ import {
 
 import { useDispatch, useSelector } from 'react-redux';
 import { getLatLongFromExif } from '../helpers/exifDataReader';
-import { devConsoleLog, guidToString } from '../helpers/functions';
+import { devConsoleLog, getNewId } from '../helpers/functions';
 import { Label } from '../interfaces/label';
 import { ImageType, Photo } from '../interfaces/photo';
 import { RootState } from '../storage';
@@ -39,13 +38,13 @@ const GalleryScreen = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
-  const onLabelEditing = (propLabel?: Guid) => {
-    const checkId = propLabel ? guidToString(propLabel) : "";
+  const onLabelEditing = (propLabel?: string) => {
+    const checkId = propLabel ? propLabel : "";
     navigation.navigate('Editing label', {id: checkId});
   }
 
-  const onFullImage = (propPhoto: Guid) => {
-    navigation.navigate('Full image', {id: guidToString(propPhoto)});
+  const onFullImage = (propPhoto: string) => {
+    navigation.navigate('Full image', {id: propPhoto});
   }
 
   const labelState = useSelector((state: RootState) => state.labelState);
@@ -63,7 +62,7 @@ const GalleryScreen = () => {
     }).then(image => {
       const latLong = getLatLongFromExif(image.exif);
 
-      dispatch(addPhotoFromGallery({id: Guid.create(), imageUri: `data:${image.mime};base64,${image.data}`, type: ImageType.Gallery,
+      dispatch(addPhotoFromGallery({id: getNewId(), imageUri: `data:${image.mime};base64,${image.data}`, type: ImageType.Gallery,
                                   labels: [], height: image.height, width: image.width, latitude: latLong ? latLong.lat : undefined, longitude: latLong ? latLong.lng : undefined}))
     }).catch(error => console.log(error));
   }
@@ -79,7 +78,7 @@ const GalleryScreen = () => {
         images.forEach(image => {
           const latLong = getLatLongFromExif(image.exif);
 
-          photos.push({id: Guid.create(), imageUri: `data:${image.mime};base64,${image.data}`, type: ImageType.Gallery,
+          photos.push({id: getNewId(), imageUri: `data:${image.mime};base64,${image.data}`, type: ImageType.Gallery,
                       labels: [], height: image.height, width: image.width, latitude: latLong ? latLong.lat : undefined, longitude: latLong ? latLong.lng : undefined})
         });
         dispatch(addMultiplePhoto(photos));
@@ -104,7 +103,7 @@ const GalleryScreen = () => {
                 mode="outlined" 
                 textStyle={{ color:'white',fontSize: 15 }}
                 style={{ margin: 4, backgroundColor: item.color }}
-                key={guidToString(item.id)}
+                key={item.id}
                 onPress={() => {}}
                 onLongPress={() => onLabelEditing(item.id)}
                 />
@@ -126,7 +125,7 @@ const GalleryScreen = () => {
         <FlatList
           numColumns={2}
           data={photoState.photos}
-          keyExtractor={item => guidToString(item.id)}
+          keyExtractor={item => item.id}
           renderItem={({item})=>{
             return (
               <Pressable onPress={() => onFullImage(item.id)}>
@@ -137,7 +136,7 @@ const GalleryScreen = () => {
           }}
         />
         <Provider>
-          <Portal >
+          <Portal>
             <FAB.Group 
               fabStyle={{backgroundColor: '#5c80ac'}}
               color={'#cccccc'}

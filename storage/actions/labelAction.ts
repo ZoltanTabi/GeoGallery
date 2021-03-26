@@ -10,7 +10,6 @@ import {
     REMOVE_PHOTO_FROM_ALL_LABEL,
     LabelActionTypes
 } from '../../interfaces/label';
-import { Guid } from 'guid-typescript';
 import { Dispatch } from 'redux';
 import { getData } from '../asyncStorage';
 import { StateEnum } from '../../enums/stateEnum';
@@ -49,7 +48,7 @@ export function updateLabel(label: Label): LabelActionTypes {
 /**
  * @description Don't use this action! Use commonDeleteLabel.
  */
-export function deleteLabel(id: Guid): LabelActionTypes {
+export function deleteLabel(id: string): LabelActionTypes {
     return {
         type: DELETE_LABEL,
         payload: {
@@ -61,7 +60,7 @@ export function deleteLabel(id: Guid): LabelActionTypes {
 /**
  * @description Don't use this action! Use commonAddLabelToPhoto.
  */
-export function addPhotoToLabel(photoId: Guid, labelId: Guid): LabelActionTypes {
+export function addPhotoToLabel(photoId: string, labelId: string): LabelActionTypes {
     return {
         type: ADD_PHOTO_TO_LABEL,
         payload: {
@@ -74,7 +73,7 @@ export function addPhotoToLabel(photoId: Guid, labelId: Guid): LabelActionTypes 
 /**
  * @description Don't use this action! Use commonRemoveLabelFromPhoto.
  */
-export function removePhotoFromLabel(photoId: Guid, labelId: Guid): LabelActionTypes {
+export function removePhotoFromLabel(photoId: string, labelId: string): LabelActionTypes {
     return {
         type: REMOVE_PHOTO_FROM_LABEL,
         payload: {
@@ -87,7 +86,7 @@ export function removePhotoFromLabel(photoId: Guid, labelId: Guid): LabelActionT
 /**
  * @description Don't use this action! Use commonDeletePhoto.
  */
-export function removePhotoFromAllLabel(photoId: Guid): LabelActionTypes {
+export function removePhotoFromAllLabel(photoId: string): LabelActionTypes {
     return {
         type: REMOVE_PHOTO_FROM_ALL_LABEL,
         payload: {

@@ -2,7 +2,7 @@ import React, { ReactElement, useState } from 'react';
 import { Image, PermissionsAndroid, StyleSheet, View } from 'react-native';
 import MapView, { Region, PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import { useSelector } from 'react-redux';
-import { devConsoleLog, guidToString } from '../helpers/functions';
+import { devConsoleLog } from '../helpers/functions';
 import { RootState } from '../storage';
 
 
@@ -38,7 +38,7 @@ const MapScreen = (): ReactElement => {
         photoState.photos.filter(x => x.latitude && x.longitude).map((item) => {
           return (
             <Marker
-              key={guidToString(item.id)}
+              key={item.id}
               coordinate={{latitude: item.latitude as number, longitude: item.longitude as number}}
             >
               <Image source={{uri: item.imageUri}}

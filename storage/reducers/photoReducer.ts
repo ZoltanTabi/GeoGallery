@@ -1,5 +1,5 @@
 import { StateEnum } from '../../enums/stateEnum';
-import { findIndexById, guidToString } from '../../helpers/functions';
+import { findIndexById } from '../../helpers/functions';
 import {
     PhotoState,
     INIT_PHOTO_STATE,
@@ -48,7 +48,7 @@ export function photoReducer(state = initialState, action: PhotoActionTypes): Ph
         {
             const newState: PhotoState = {
                 photos: state.photos.filter(
-                    photo => guidToString(photo.id) !== guidToString(action.payload.id)
+                    photo => photo.id !== action.payload.id
                 )
             };
 
@@ -68,7 +68,7 @@ export function photoReducer(state = initialState, action: PhotoActionTypes): Ph
         case REMOVE_LABEL_FROM_PHOTO:
         {
             const index = findIndexById(state.photos, action.payload.photoId);
-            state.photos[index].labels = state.photos[index].labels.filter(x => guidToString(x) !== guidToString(action.payload.labelId));
+            state.photos[index].labels = state.photos[index].labels.filter(x => x !== action.payload.labelId);
             storePhotoState(state);
 
             return {
@@ -78,7 +78,7 @@ export function photoReducer(state = initialState, action: PhotoActionTypes): Ph
         case REMOVE_LABEL_FROM_ALL_PHOTO:
         {
             state.photos.forEach(x => {
-                x.labels = x.labels.filter(y => guidToString(y) !== guidToString(action.payload.labelId));
+                x.labels = x.labels.filter(y => y !== action.payload.labelId);
             });
             storePhotoState(state);
 

@@ -1,9 +1,7 @@
 import { RouteProp, useRoute } from '@react-navigation/core';
-import { Guid } from 'guid-typescript';
 import React, { ReactElement } from 'react';
 import { View, Text, Image, useWindowDimensions } from 'react-native';
 import { useSelector } from 'react-redux';
-import { guidToString } from '../helpers/functions';
 import { Photo } from '../interfaces/photo';
 import { RootState } from '../storage';
 
@@ -15,7 +13,7 @@ const FullImageScreen = (): ReactElement => {
 
 	const photoState = useSelector((state: RootState) => state.photoState);
 
-	const photoObject = photoState.photos.find((photo) => guidToString(photo.id) == route.params.id)as Photo;
+	const photoObject = photoState.photos.find((photo) => photo.id == route.params.id)as Photo;
 
 	return (
 		<View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>

@@ -1,11 +1,14 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Guid } from "guid-typescript";
 
-export function findIndexById(array: any[], id: Guid): number {
-    return array.indexOf(array.find(x => guidToString(id) === guidToString(x.id)));
+export function findIndexById(array: any[], id: string): number {
+    return array.indexOf(array.find(x => id === x.id));
 }
 
-export function guidToString(guid: Guid): string {
+export function getNewId(): string {
+    return guidToString(Guid.create());
+}
+
+function guidToString(guid: Guid): string {
     return (guid['value'].toString() as string);
 }
 
