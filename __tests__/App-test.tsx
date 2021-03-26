@@ -28,6 +28,8 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
 	})
 }));
 
+jest.mock('react-native/Libraries/Animated/src/NativeAnimatedHelper');
+
 it('renders correctly', () => {
   jest.useFakeTimers();
   renderer.create(<App />);
