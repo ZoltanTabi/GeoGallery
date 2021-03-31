@@ -16,7 +16,7 @@ import { StateEnum } from '../../enums/stateEnum';
 import { Dispatch } from 'redux';
 import { initPhotoToPhoto } from '../../helpers/functions';
 import { Platform } from 'react-native';
-var RNFS = require('react-native-fs');
+import RNFS from 'react-native-fs';
 
 /**
  * @description Don't use this action! Use initState.
