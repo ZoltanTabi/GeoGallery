@@ -1,6 +1,6 @@
 import { Guid } from "guid-typescript";
 import { InitPhoto, Photo } from "../interfaces/photo";
-import { getLatLongFromExif } from "./exifDataReader";
+import { getDateTimeFromExif, getLatLongFromExif } from "./exifDataReader";
 
 export function findIndexById(array: any[], id: string): number {
     return array.indexOf(array.find(x => id === x.id));
@@ -22,6 +22,7 @@ export function devConsoleLog(log: any): void {
 
 export function initPhotoToPhoto(initPhoto: InitPhoto, path: string): Photo {
     const latLong = getLatLongFromExif(initPhoto.exif);
+    const dateTime = getDateTimeFromExif(initPhoto.exif);
 
     return {
         id: initPhoto.id,
@@ -31,7 +32,8 @@ export function initPhotoToPhoto(initPhoto: InitPhoto, path: string): Photo {
         width: initPhoto.width,
         height: initPhoto.height,
         latitude: latLong ? latLong.lat : undefined,
-        longitude: latLong ? latLong.lng : undefined
+        longitude: latLong ? latLong.lng : undefined,
+        createDate: dateTime
     };
 }
 

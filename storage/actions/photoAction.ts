@@ -38,7 +38,6 @@ export function initPhotoState() {
 export function addPhoto(initPhoto: InitPhoto) {
     return (dispatch: Dispatch<any>) => {
         const path = (Platform.OS === 'ios' ? '' : 'file://') + RNFS.DocumentDirectoryPath + `/${initPhoto.id}.${initPhoto.extension}`;
-        console.log(path);
 
         RNFS.writeFile(path, initPhoto.base64Encoded, 'base64')
         .then(() => {
@@ -63,7 +62,6 @@ export function addMultiplePhoto(initPhotos: InitPhoto[]) {
         initPhotos.forEach(x => {
             try {
                 const path = (Platform.OS === 'ios' ? '' : 'file://') + RNFS.DocumentDirectoryPath + `/${x.id}.${x.extension}`;
-                console.log(path);
                 imageSaves.push(RNFS.writeFile(path, x.base64Encoded, 'base64'));
                 photos.push(initPhotoToPhoto(x, path));
             }
