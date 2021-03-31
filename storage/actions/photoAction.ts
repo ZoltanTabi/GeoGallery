@@ -1,5 +1,6 @@
 import {
     Photo,
+    PhotoForAdd,
     PhotoState,
     INIT_PHOTO_STATE,
     ADD_PHOTO,
@@ -8,13 +9,11 @@ import {
     ADD_LABEL_TO_PHOTO,
     REMOVE_LABEL_FROM_PHOTO,
     REMOVE_LABEL_FROM_ALL_PHOTO,
-    PhotoActionTypes,
-    InitPhoto
+    PhotoActionTypes
 } from '../../interfaces/photo';
 import { getData } from '../asyncStorage';
 import { StateEnum } from '../../enums/stateEnum';
 import { Dispatch } from 'redux';
-import { initPhotoToPhoto } from '../../helpers/functions';
 import { Platform } from 'react-native';
 import RNFS from 'react-native-fs';
 
@@ -35,16 +34,17 @@ export function initPhotoState() {
     }
 }
 
-export function addPhoto(initPhoto: InitPhoto) {
+export function addPhoto(photoForAdd: PhotoForAdd) {
     return (dispatch: Dispatch<any>) => {
-        const path = (Platform.OS === 'ios' ? '' : 'file://') + RNFS.DocumentDirectoryPath + `/${initPhoto.id}.${initPhoto.extension}`;
+        const path = (Platform.OS === 'ios' ? '' : 'file://') + RNFS.DocumentDirectoryPath + `/${photoForAdd.photo.id}.${photoForAdd.extension}`;
+        photoForAdd.photo.imageUri = path;
 
-        RNFS.writeFile(path, initPhoto.base64Encoded, 'base64')
+        RNFS.writeFile(path, photoForAdd.base64Encoded, 'base64')
         .then(() => {
             dispatch(
                 {
                     type: ADD_PHOTO,
-                    payload: initPhotoToPhoto(initPhoto, path)
+                    payload: photoForAdd.photo
                 }
             );
         })
@@ -54,23 +54,16 @@ export function addPhoto(initPhoto: InitPhoto) {
     }
 }
 
-export function addMultiplePhoto(initPhotos: InitPhoto[]) {
+export function addMultiplePhoto(photoForAdds: PhotoForAdd[]) {
     return async (dispatch: Dispatch<any>) => {
         const photos: Photo[] = [];
-        const imageSaves: any[] = [];
-
-        initPhotos.forEach(x => {
-            try {
-                const path = (Platform.OS === 'ios' ? '' : 'file://') + RNFS.DocumentDirectoryPath + `/${x.id}.${x.extension}`;
-                imageSaves.push(RNFS.writeFile(path, x.base64Encoded, 'base64'));
-                photos.push(initPhotoToPhoto(x, path));
-            }
-            catch(err) {
-                console.error(err);
-            }
-        })
         
-        await Promise.all(imageSaves);
+        await Promise.all(photoForAdds.map(async x => {
+            const path = (Platform.OS === 'ios' ? '' : 'file://') + RNFS.DocumentDirectoryPath + `/${x.photo.id}.${x.extension}`;
+            x.photo.imageUri = path;
+            photos.push(x.photo);
+            await RNFS.writeFile(path, x.base64Encoded, 'base64');
+        }));
 
         dispatch(
             {

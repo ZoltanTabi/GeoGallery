@@ -1,6 +1,9 @@
 import { Guid } from "guid-typescript";
-import { InitPhoto, Photo } from "../interfaces/photo";
+import { ImageType, Photo } from "../interfaces/photo";
 import { getDateTimeFromExif, getLatLongFromExif } from "./exifDataReader";
+import Geocoder from '@timwangdev/react-native-geocoder';
+import { Image } from 'react-native-image-crop-picker';
+
 
 export function findIndexById(array: any[], id: string): number {
     return array.indexOf(array.find(x => id === x.id));
@@ -20,20 +23,33 @@ export function devConsoleLog(log: any): void {
     }
 }
 
-export function initPhotoToPhoto(initPhoto: InitPhoto, path: string): Photo {
-    const latLong = getLatLongFromExif(initPhoto.exif);
-    const dateTime = getDateTimeFromExif(initPhoto.exif);
+export async function imageToPhoto(image: Image, type: ImageType): Promise<Photo> {
+    const latLong = getLatLongFromExif(image.exif);
+    const dateTime = getDateTimeFromExif(image.exif);
+    let address, country, city;
+
+    if (latLong) {
+        const result = await Geocoder.geocodePosition(latLong, {locale: 'en'});
+        if (result.length > 0) {
+            address = result[0].formattedAddress;
+            country = result[0].country;
+            city = result[0].locality ? result[0].locality : '';
+        }
+    }
 
     return {
-        id: initPhoto.id,
-        imageUri: path,
-        type: initPhoto.type,
+        id: getNewId(),
+        imageUri: '',
+        type: type,
         labels: [],
-        width: initPhoto.width,
-        height: initPhoto.height,
+        width: image.width,
+        height: image.height,
         latitude: latLong ? latLong.lat : undefined,
         longitude: latLong ? latLong.lng : undefined,
-        createDate: dateTime
+        createDate: dateTime,
+        address: address,
+        country: country,
+        city: city
     };
 }
 

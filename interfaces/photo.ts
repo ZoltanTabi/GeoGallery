@@ -4,12 +4,8 @@ export enum ImageType {
     Gallery = 2
 }
 
-export interface InitPhoto {
-    id: string;
-    type: ImageType;
-    width: number;
-    height: number;
-    exif: any;
+export interface PhotoForAdd {
+    photo: Photo;
     extension: string;
     base64Encoded: string;
 }
@@ -24,6 +20,7 @@ export interface Photo {
     longitude?: number;
     latitude?: number;
     createDate?: Date;
+    address?: string;
     country?: string;
     city?: string;
 }

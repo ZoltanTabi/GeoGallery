@@ -26,9 +26,9 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { devConsoleLog, getNewId } from '../helpers/functions';
+import { devConsoleLog, getNewId, imageToPhoto } from '../helpers/functions';
 import { Label } from '../interfaces/label';
-import { ImageType, InitPhoto } from '../interfaces/photo';
+import { ImageType, PhotoForAdd } from '../interfaces/photo';
 import { RootState } from '../storage';
 import { addMultiplePhoto, addPhoto } from '../storage/actions/photoAction';
 
@@ -58,8 +58,9 @@ const GalleryScreen = () => {
       mediaType: "photo",
       includeExif: true,
       includeBase64: true
-    }).then(image => {
-      dispatch(addPhoto({ id: getNewId(), type: ImageType.Gallery, height: image.height, width: image.width, exif: image.exif, base64Encoded: image.data as string, extension: image.mime.split('/')[1] }))
+    }).then(async image => {
+      const photo = await imageToPhoto(image, ImageType.Camera);
+      dispatch(addPhoto({ photo: photo, base64Encoded: image.data as string, extension: image.mime.split('/')[1] }))
     }).catch(error => console.log(error));
   }
 
@@ -69,12 +70,15 @@ const GalleryScreen = () => {
       mediaType: 'photo',
       includeExif: true,
       includeBase64: true
-      }).then(images => {
-        const initPhotos: InitPhoto[] = []
-        images.forEach(image => {
-          initPhotos.push({ id: getNewId(), type: ImageType.Gallery, height: image.height, width: image.width, exif: image.exif, base64Encoded: image.data as string, extension: image.mime.split('/')[1] })
-        });
-        dispatch(addMultiplePhoto(initPhotos));
+      }).then(async images => {
+        const photoForAdds: PhotoForAdd[] = []
+
+        await Promise.all(images.map(async (image) => {
+          const photo = await imageToPhoto(image, ImageType.Gallery);
+          photoForAdds.push({ photo: photo, base64Encoded: image.data as string, extension: image.mime.split('/')[1] });
+        }));
+
+        dispatch(addMultiplePhoto(photoForAdds));
     }).catch(error => console.log(error));
   }
 
