@@ -10,7 +10,7 @@ export function findIndexById(array: any[], id: string): number {
 }
 
 export function getNewId(): string {
-    return guidToString(Guid.create()).replace('-', '');
+    return guidToString(Guid.create()).replace(/[-]/, '');
 }
 
 function guidToString(guid: Guid): string {
