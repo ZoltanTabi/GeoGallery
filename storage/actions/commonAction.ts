@@ -12,7 +12,6 @@ import {
     removeLabelFromAllPhoto,
     addLabelToPhoto,
     removeLabelFromPhoto,
-    deletePhotoFromImageStore,
     deletePhoto
 } from "./photoAction";
 
@@ -25,11 +24,7 @@ export function initState() {
 
 export function commonDeletePhoto(photo: Photo) {
     return (dispatch: Dispatch<any>) => {
-        if (photo.type === ImageType.Camera) {
-            dispatch(deletePhotoFromImageStore(photo.id, photo.imageUri));
-        } else {
-            dispatch(deletePhoto(photo.id));
-        }
+        dispatch(deletePhoto(photo.id, photo.imageUri));
         dispatch(removePhotoFromAllLabel(photo.id));
     }
 }

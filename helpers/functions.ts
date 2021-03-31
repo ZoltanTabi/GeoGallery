@@ -1,11 +1,13 @@
 import { Guid } from "guid-typescript";
+import { InitPhoto, Photo } from "../interfaces/photo";
+import { getLatLongFromExif } from "./exifDataReader";
 
 export function findIndexById(array: any[], id: string): number {
     return array.indexOf(array.find(x => id === x.id));
 }
 
 export function getNewId(): string {
-    return guidToString(Guid.create());
+    return guidToString(Guid.create()).replace('-', '');
 }
 
 function guidToString(guid: Guid): string {
@@ -16,6 +18,21 @@ export function devConsoleLog(log: any): void {
     if(__DEV__) {
         console.log(log);
     }
+}
+
+export function initPhotoToPhoto(initPhoto: InitPhoto, path: string): Photo {
+    const latLong = getLatLongFromExif(initPhoto.exif);
+
+    return {
+        id: initPhoto.id,
+        imageUri: path,
+        type: initPhoto.type,
+        labels: [],
+        width: initPhoto.width,
+        height: initPhoto.height,
+        latitude: latLong ? latLong.lat : undefined,
+        longitude: latLong ? latLong.lng : undefined
+    };
 }
 
 // If GUID not good for project, We use id, ang generate with this code

@@ -26,12 +26,11 @@ import {
 } from 'react-native/Libraries/NewAppScreen';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { getLatLongFromExif } from '../helpers/exifDataReader';
 import { devConsoleLog, getNewId } from '../helpers/functions';
 import { Label } from '../interfaces/label';
-import { ImageType, Photo } from '../interfaces/photo';
+import { ImageType, InitPhoto } from '../interfaces/photo';
 import { RootState } from '../storage';
-import { addMultiplePhoto, addPhotoFromGallery } from '../storage/actions/photoAction';
+import { addMultiplePhoto, addPhoto } from '../storage/actions/photoAction';
 
 const GalleryScreen = () => {
 
@@ -60,10 +59,7 @@ const GalleryScreen = () => {
       includeExif: true,
       includeBase64: true
     }).then(image => {
-      const latLong = getLatLongFromExif(image.exif);
-
-      dispatch(addPhotoFromGallery({id: getNewId(), imageUri: `data:${image.mime};base64,${image.data}`, type: ImageType.Gallery,
-                                  labels: [], height: image.height, width: image.width, latitude: latLong ? latLong.lat : undefined, longitude: latLong ? latLong.lng : undefined}))
+      dispatch(addPhoto({ id: getNewId(), type: ImageType.Gallery, height: image.height, width: image.width, exif: image.exif, base64Encoded: image.data as string, extension: image.mime.split('/')[1] }))
     }).catch(error => console.log(error));
   }
 
@@ -74,14 +70,11 @@ const GalleryScreen = () => {
       includeExif: true,
       includeBase64: true
       }).then(images => {
-        const photos: Photo[] = []
+        const initPhotos: InitPhoto[] = []
         images.forEach(image => {
-          const latLong = getLatLongFromExif(image.exif);
-
-          photos.push({id: getNewId(), imageUri: `data:${image.mime};base64,${image.data}`, type: ImageType.Gallery,
-                      labels: [], height: image.height, width: image.width, latitude: latLong ? latLong.lat : undefined, longitude: latLong ? latLong.lng : undefined})
+          initPhotos.push({ id: getNewId(), type: ImageType.Gallery, height: image.height, width: image.width, exif: image.exif, base64Encoded: image.data as string, extension: image.mime.split('/')[1] })
         });
-        dispatch(addMultiplePhoto(photos));
+        dispatch(addMultiplePhoto(initPhotos));
     }).catch(error => console.log(error));
   }
 

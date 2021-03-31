@@ -4,6 +4,16 @@ export enum ImageType {
     Gallery = 2
 }
 
+export interface InitPhoto {
+    id: string;
+    type: ImageType;
+    width: number;
+    height: number;
+    exif: any;
+    extension: string;
+    base64Encoded: string;
+}
+
 export interface Photo {
     id: string;
     imageUri: string;

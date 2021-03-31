@@ -17,6 +17,8 @@ target 'GeoGallery' do
   pod 'GoogleMaps'
   pod 'Google-Maps-iOS-Utils'
 
+  pod 'RNFS', :path => '../node_modules/react-native-fs'
+
   target 'GeoGalleryTests' do
     inherit! :complete
     # Pods for testing
