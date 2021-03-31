@@ -1,11 +1,16 @@
 import { Guid } from "guid-typescript";
+import { ImageType, Photo } from "../interfaces/photo";
+import { getDateTimeFromExif, getLatLongFromExif } from "./exifDataReader";
+import Geocoder from '@timwangdev/react-native-geocoder';
+import { Image } from 'react-native-image-crop-picker';
+
 
 export function findIndexById(array: any[], id: string): number {
     return array.indexOf(array.find(x => id === x.id));
 }
 
 export function getNewId(): string {
-    return guidToString(Guid.create());
+    return guidToString(Guid.create()).replace(/[-]/, '');
 }
 
 function guidToString(guid: Guid): string {
@@ -16,6 +21,36 @@ export function devConsoleLog(log: any): void {
     if(__DEV__) {
         console.log(log);
     }
+}
+
+export async function imageToPhoto(image: Image, type: ImageType): Promise<Photo> {
+    const latLong = getLatLongFromExif(image.exif);
+    const dateTime = getDateTimeFromExif(image.exif);
+    let address, country, city;
+
+    if (latLong) {
+        const result = await Geocoder.geocodePosition(latLong, {locale: 'en'});
+        if (result.length > 0) {
+            address = result[0].formattedAddress;
+            country = result[0].country;
+            city = result[0].locality ? result[0].locality : '';
+        }
+    }
+
+    return {
+        id: getNewId(),
+        imageUri: '',
+        type: type,
+        labels: [],
+        width: image.width,
+        height: image.height,
+        latitude: latLong ? latLong.lat : undefined,
+        longitude: latLong ? latLong.lng : undefined,
+        createDate: dateTime,
+        address: address,
+        country: country,
+        city: city
+    };
 }
 
 // If GUID not good for project, We use id, ang generate with this code

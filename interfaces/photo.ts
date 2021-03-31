@@ -4,6 +4,12 @@ export enum ImageType {
     Gallery = 2
 }
 
+export interface PhotoForAdd {
+    photo: Photo;
+    extension: string;
+    base64Encoded: string;
+}
+
 export interface Photo {
     id: string;
     imageUri: string;
@@ -14,6 +20,7 @@ export interface Photo {
     longitude?: number;
     latitude?: number;
     createDate?: Date;
+    address?: string;
     country?: string;
     city?: string;
 }

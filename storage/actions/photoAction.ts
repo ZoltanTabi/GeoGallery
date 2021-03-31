@@ -1,5 +1,6 @@
 import {
     Photo,
+    PhotoForAdd,
     PhotoState,
     INIT_PHOTO_STATE,
     ADD_PHOTO,
@@ -13,6 +14,8 @@ import {
 import { getData } from '../asyncStorage';
 import { StateEnum } from '../../enums/stateEnum';
 import { Dispatch } from 'redux';
+import { Platform } from 'react-native';
+import RNFS from 'react-native-fs';
 
 /**
  * @description Don't use this action! Use initState.
@@ -31,51 +34,65 @@ export function initPhotoState() {
     }
 }
 
-export function addPhotoFromGallery(photo: Photo): PhotoActionTypes {
-    return {
-        type: ADD_PHOTO,
-        payload: photo
-    }
-}
-
-export function addPhotoFromCamera(id: string, base64Encoded: string): PhotoActionTypes {
-    throw('addPhotoFromCamera action is not implemented!');
-    /*const newPhoto: Photo = {  };
-    return {
-        type: ADD_PHOTO,
-        payload: newPhoto
-    }*/
-}
-
-export function addMultiplePhoto(photos: Photo[]): PhotoActionTypes {
-    return {
-        type: ADD_MULTIPLE_PHOTO,
-        payload: photos
-    }
-}
-
-/**
- * @description Don't use this action! Use commonDeletePhoto.
- */
-export function deletePhoto(id: string): PhotoActionTypes {
-    return {
-        type: DELETE_PHOTO,
-        payload: {
-            id: id
-        }
-    }
-}
-
-/**
- * @description Don't use this action! Use commonDeletePhoto.
- */
-export function deletePhotoFromImageStore(id: string, uri: string) {
-    throw('deletePhotoFromImageStore action is not implemented!');
+export function addPhoto(photoForAdd: PhotoForAdd) {
     return (dispatch: Dispatch<any>) => {
-        // GetData change to delete from ImageStore
-        getData(StateEnum.labels)
-            .then((result) => {
-            dispatch(deletePhoto(id));
+        const path = (Platform.OS === 'ios' ? '' : 'file://') + RNFS.DocumentDirectoryPath + `/${photoForAdd.photo.id}.${photoForAdd.extension}`;
+        photoForAdd.photo.imageUri = path;
+
+        RNFS.writeFile(path, photoForAdd.base64Encoded, 'base64')
+        .then(() => {
+            dispatch(
+                {
+                    type: ADD_PHOTO,
+                    payload: photoForAdd.photo
+                }
+            );
+        })
+        .catch((err: any) => {
+            console.log(err.message);
+        });
+    }
+}
+
+export function addMultiplePhoto(photoForAdds: PhotoForAdd[]) {
+    return async (dispatch: Dispatch<any>) => {
+        const photos: Photo[] = [];
+        
+        await Promise.all(photoForAdds.map(async x => {
+            const path = (Platform.OS === 'ios' ? '' : 'file://') + RNFS.DocumentDirectoryPath + `/${x.photo.id}.${x.extension}`;
+            x.photo.imageUri = path;
+            photos.push(x.photo);
+            await RNFS.writeFile(path, x.base64Encoded, 'base64');
+        }));
+
+        dispatch(
+            {
+                type: ADD_MULTIPLE_PHOTO,
+                payload: photos
+            }
+        );
+    }
+}
+
+/**
+ * @description Don't use this action! Use commonDeletePhoto.
+ */
+export function deletePhoto(id: string, uri: string) {
+
+    return (dispatch: Dispatch<any>) => {
+        RNFS.unlink(uri)
+        .then(() => {
+            dispatch(
+                {
+                    type: DELETE_PHOTO,
+                    payload: {
+                        id: id
+                    }
+                }
+            );
+        })
+        .catch((err: any) => {
+            console.log(err.message);
         });
     }
 }

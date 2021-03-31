@@ -1,5 +1,5 @@
 
-export const convertDMSToDD = (degrees: any, minutes: any, seconds: any, direction: any): number => {
+const convertDMSToDD = (degrees: any, minutes: any, seconds: any, direction: any): number => {
     var dd = degrees + minutes / 60 + seconds / 3600;
     if (direction == "S" || direction == "W") {
         dd = dd * -1;
@@ -28,6 +28,17 @@ export const getLatLongFromExif = (exif: any) => {
                     return selectedLocation;
                 }
             }
+        }
+    }
+}
+
+export const getDateTimeFromExif = (exif: any) => {
+    if (exif) {
+        let dateTime: string = exif.DateTime;
+        if (dateTime) {
+            const t = dateTime.split(/[:| ]/);
+            
+            return new Date(Number(t[0]), (Number(t[1])-1), Number(t[2]), Number(t[3]), Number(t[4]), Number(t[5]));
         }
     }
 }
