@@ -10,7 +10,7 @@ export function findIndexById(array: any[], id: string): number {
 }
 
 export function getNewId(): string {
-    return guidToString(Guid.create()).replace(/[-]/, '');
+    return guidToString(Guid.create()).replace(/-/g, '');
 }
 
 function guidToString(guid: Guid): string {
@@ -21,6 +21,10 @@ export function devConsoleLog(log: any): void {
     if(__DEV__) {
         console.log(log);
     }
+}
+
+export function onlyUnique(value: any, index: any, self: string | any[]) {
+    return self.indexOf(value) === index;
 }
 
 export async function imageToPhoto(image: Image, type: ImageType): Promise<Photo> {
