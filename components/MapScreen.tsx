@@ -39,6 +39,10 @@ const MapScreen = (): ReactElement => {
         return;
     }
     
+    if (newRegion.longitudeDelta < 0) {
+      newRegion.longitudeDelta = newRegion.longitudeDelta + 360;
+    }
+
     setRegion(newRegion);
   }
 
