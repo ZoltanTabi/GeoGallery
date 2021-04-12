@@ -27,19 +27,24 @@ export function onlyUnique(value: any, index: any, self: string | any[]) {
     return self.indexOf(value) === index;
 }
 
-export async function imageToPhoto(image: Image, type: ImageType): Promise<Photo> {
-    const latLong = getLatLongFromExif(image.exif);
+export async function imageToPhoto(image: Image, type: ImageType, latLng?: { lat: number; lng: number; }): Promise<Photo> {
+    latLng = latLng ?? getLatLongFromExif(image.exif);
     const dateTime = getDateTimeFromExif(image.exif);
     let address, country, city;
 
-    if (latLong) {
-        const result = await Geocoder.geocodePosition(latLong, {locale: 'en'});
+    if (latLng) {
+        const result = await Geocoder.geocodePosition(latLng, {locale: 'en'});
         if (result.length > 0) {
             address = result[0].formattedAddress;
             country = result[0].country;
             city = result[0].locality ? result[0].locality : '';
         }
     }
+
+    devConsoleLog(latLng);
+    devConsoleLog('address: ' + address);
+    devConsoleLog('country: ' + country);
+    devConsoleLog('city: ' + city);
 
     return {
         id: getNewId(),
@@ -48,8 +53,8 @@ export async function imageToPhoto(image: Image, type: ImageType): Promise<Photo
         labels: [],
         width: image.width,
         height: image.height,
-        latitude: latLong ? latLong.lat : undefined,
-        longitude: latLong ? latLong.lng : undefined,
+        latitude: latLng?.lat,
+        longitude: latLng?.lng,
         createDate: dateTime,
         address: address,
         country: country,
