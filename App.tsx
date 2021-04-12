@@ -148,7 +148,8 @@ export default function App() {
             <Stack.Screen name="Editing label" component={LabelEditingScreen} 
                           options={{
                             headerTintColor: '#cccccc',
-                            headerStyle: { backgroundColor: '#5c80ac' }
+                            headerStyle: { backgroundColor: '#5c80ac' },
+                            headerLeft: ()=> null
                           }}/>
             <Stack.Screen name="Full image" component={FullImageScreen} 
                           options={{
