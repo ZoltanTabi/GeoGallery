@@ -29,6 +29,17 @@ jest.mock('@react-native-async-storage/async-storage', () => ({
 }));
 
 jest.mock('react-native/Libraries/Animated/src/NativeAnimatedHelper');
+jest.mock('@react-native-community/geolocation', () => {
+  return {
+    addListener: jest.fn(),
+    getCurrentPosition: jest.fn(),
+    removeListeners: jest.fn(),
+    requestAuthorization: jest.fn(),
+    setConfiguration: jest.fn(),
+    startObserving: jest.fn(),
+    stopObserving: jest.fn()
+  };
+});
 
 jest.mock('react-native-fs', () => {
   return {
