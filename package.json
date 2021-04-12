@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.14.1",
+    "@react-native-community/geolocation": "^2.0.2",
     "@react-native-community/masked-view": "^0.1.10",
     "@react-native-community/slider": "^3.0.3",
     "@react-navigation/material-bottom-tabs": "^5.3.14",
@@ -22,6 +23,7 @@
     "patch-package": "^6.4.7",
     "react": "16.13.1",
     "react-native": "0.63.4",
+    "react-native-android-location-enabler": "^1.2.2",
     "react-native-color-picker": "^0.6.0",
     "react-native-fs": "^2.16.6",
     "react-native-gesture-handler": "^1.10.3",

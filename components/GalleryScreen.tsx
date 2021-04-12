@@ -11,6 +11,7 @@ import {
   useWindowDimensions,
   Pressable,
   Image,
+  PermissionsAndroid,
 } from 'react-native';
 import ImageCropPicker from 'react-native-image-crop-picker';
 
@@ -31,6 +32,8 @@ import { Label } from '../interfaces/label';
 import { ImageType, PhotoForAdd } from '../interfaces/photo';
 import { RootState } from '../storage';
 import { addMultiplePhoto, addPhoto } from '../storage/actions/photoAction';
+import Geolocation from '@react-native-community/geolocation';
+import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 
 const GalleryScreen = () => {
 
@@ -53,15 +56,30 @@ const GalleryScreen = () => {
   const onStateChange = (open: boolean) => setState( open );
   const open = state;
 
-  const addPhotoByCamera = () => {
-    ImageCropPicker.openCamera({
-      mediaType: "photo",
-      includeExif: true,
-      includeBase64: true
-    }).then(async image => {
-      const photo = await imageToPhoto(image, ImageType.Camera);
-      dispatch(addPhoto({ photo: photo, base64Encoded: image.data as string, extension: image.mime.split('/')[1] }))
-    }).catch(error => console.log(error));
+  const addPhotoByCamera = async () => {
+    const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+    
+    if (granted === 'granted') {
+      RNAndroidLocationEnabler.promptForEnableLocationIfNeeded({
+        interval: 10000,
+        fastInterval: 5000
+      }).then(() => {
+        ImageCropPicker.openCamera({
+          mediaType: "photo",
+          includeExif: true,
+          includeBase64: true
+        }).then(image => {
+          Geolocation.getCurrentPosition(async info => 
+            {
+              const photo = await imageToPhoto(image, ImageType.Camera, {lat: info.coords.latitude, lng: info.coords.longitude});
+              dispatch(addPhoto({ photo: photo, base64Encoded: image.data as string, extension: image.mime.split('/')[1] }))
+            });
+        }).catch(error => devConsoleLog(error));
+      })
+      .catch((error) => devConsoleLog(error));
+    } else {
+      //TODO Dialog
+    }
   }
 
   const addPhotoByGallery = () => {
