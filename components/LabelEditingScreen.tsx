@@ -1,8 +1,8 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { ReactElement, useState } from 'react';
-import { View, useWindowDimensions, } from 'react-native';
+import React, { ReactElement, useEffect, useState } from 'react';
+import { View, useWindowDimensions, BackHandler, } from 'react-native';
 import { TriangleColorPicker, fromHsv } from 'react-native-color-picker';
-import { Text, TextInput, Chip, Button  } from 'react-native-paper';
+import { Text, TextInput, Chip, Button, Dialog, Provider, Portal  } from 'react-native-paper';
 import { Label } from '../interfaces/label';
 import { createLabel, deleteLabel, updateLabel } from '../storage/actions/labelAction';
 import { useDispatch, useSelector } from 'react-redux';
@@ -59,6 +59,25 @@ const LabelEditingScreen = (): ReactElement => {
 		dispatch(commonDeleteLabel(labelObject.id));
 		navigation.goBack();
 	}
+
+	const [visibleDelete, setVisibleDelete] = React.useState(false);
+	const showDelete = () => setVisibleDelete(true);	
+	const hideDelete = () => setVisibleDelete(false);
+
+	const [visibleCancel, setVisibleCancel] = React.useState(false);
+	const showCancel = () => setVisibleCancel(true);	
+	const hideCancel = () => setVisibleCancel(false);
+
+	function handleBackButtonClick() {
+		showCancel();
+		return true;
+	}
+	useEffect(() => {
+		BackHandler.addEventListener('hardwareBackPress', handleBackButtonClick);
+		return () => {
+			BackHandler.removeEventListener('hardwareBackPress', handleBackButtonClick);
+		};
+	}, []);
 
 	return (
 		<View style={{
@@ -122,13 +141,13 @@ const LabelEditingScreen = (): ReactElement => {
 					paddingHorizontal: '2%'}}>
 				<Button icon='cancel' mode='contained' color='#5c80ac' style={{marginHorizontal: '0.5%'}} 
 						labelStyle={{ color: '#cccccc', fontSize: 12}}
-						onPress={() => onCanceling()}>
+						onPress={showCancel}>
 					Cancel
 				</Button>
 				{ id != "" &&
 				<Button icon='trash-can' mode='contained' color='#5c80ac' style={{marginHorizontal: '0.5%'}} 
 						labelStyle={{ color: '#cccccc', fontSize: 12}}
-						onPress={() => onDeleting()}>
+						onPress={showDelete}>
 					Delete
 				</Button>}
 				<Button icon='check-bold' mode='contained' color='#5c80ac' style={{marginHorizontal: '0.5%'}} 
@@ -137,6 +156,28 @@ const LabelEditingScreen = (): ReactElement => {
 					Confirm
 				</Button>
 			</View>
+			<Provider>
+				<Portal>
+					<Dialog visible={visibleDelete}
+						dismissable={false}
+						style={{backgroundColor: '#cccccc'}}>
+						<Dialog.Title style={{color: '#5c80ac'}}>Delete this label?</Dialog.Title>
+						<Dialog.Actions>
+							<Button color='#5c80ac' onPress={hideDelete}>Cancel</Button>
+							<Button color='#ac5c5c' onPress={() => onDeleting()}>Delete</Button>
+						</Dialog.Actions>
+					</Dialog>
+					<Dialog visible={visibleCancel}
+						dismissable={false}
+						style={{backgroundColor: '#cccccc'}}>
+						<Dialog.Title style={{color: '#5c80ac'}}>Are you sure you want to discard the new label?</Dialog.Title>
+						<Dialog.Actions>
+							<Button color='#5c80ac' onPress={hideCancel}>No</Button>
+							<Button color='#5c80ac' onPress={() => onCanceling()}>Yes</Button>
+						</Dialog.Actions>
+					</Dialog>
+				</Portal>
+			</Provider>
 		</View>
 	);
 };
