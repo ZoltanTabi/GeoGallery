@@ -21,6 +21,7 @@
     "@timwangdev/react-native-geocoder": "^1.0.0-alpha.5",
     "guid-typescript": "^1.0.9",
     "patch-package": "^6.4.7",
+    "point-in-polygon": "^1.1.0",
     "react": "16.13.1",
     "react-native": "0.63.4",
     "react-native-android-location-enabler": "^1.2.2",

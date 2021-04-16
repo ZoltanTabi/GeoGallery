@@ -1,5 +1,5 @@
 import { Dispatch } from "redux";
-import { ImageType, Photo } from "../../interfaces/photo";
+import { Photo } from "../../interfaces/photo";
 import {
     deleteLabel,
     initLabelState,
@@ -14,6 +14,7 @@ import {
     removeLabelFromPhoto,
     deletePhoto
 } from "./photoAction";
+import { removeLabel } from "./searchTermAction";
 
 export function initState() {
     return (dispatch: Dispatch<any>) => {
@@ -33,6 +34,7 @@ export function commonDeleteLabel(labelId: string) {
     return (dispatch: Dispatch<any>) => {
         dispatch(deleteLabel(labelId));
         dispatch(removeLabelFromAllPhoto(labelId));
+        dispatch(removeLabel(labelId));
     }
 }
 
