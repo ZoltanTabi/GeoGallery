@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import ImageCropPicker from 'react-native-image-crop-picker';
 
-import { Button, Chip, Portal, FAB, Provider } from 'react-native-paper';
+import { Button, Chip, Portal, FAB, Provider, Dialog, Paragraph, List, Surface, Subheading, Divider, RadioButton } from 'react-native-paper';
 import { color } from 'react-native-reanimated';
 
 import {
@@ -40,11 +40,6 @@ const GalleryScreen = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
-  const onLabelEditing = (propLabel?: string) => {
-    const checkId = propLabel ? propLabel : "";
-    navigation.navigate('Editing label', {id: checkId});
-  }
-
   const onFullImage = (propPhoto: string) => {
     navigation.navigate('Full image', {id: propPhoto});
   }
@@ -55,6 +50,17 @@ const GalleryScreen = () => {
   const [state, setState] = React.useState( false );
   const onStateChange = (open: boolean) => setState( open );
   const open = state;
+
+  const [visibleFilter, setVisibleFilter] = React.useState(false);
+	const showFilter = () => setVisibleFilter(true);	
+	const hideFilter = () => setVisibleFilter(false);
+
+	const [visibleSort, setVisibleSort] = React.useState(false);
+	const showSort = () => setVisibleSort(true);	
+	const hideSort = () => setVisibleSort(false);
+
+  const [sortingValue, setSortingValue] = React.useState('location');
+  const [sortingOrder, setSortingOrder] = React.useState('ascending');
 
   const addPhotoByCamera = async () => {
     const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
@@ -102,7 +108,7 @@ const GalleryScreen = () => {
 
   return (
     <View style={{flex: 1}}>
-      <View style={{
+      {/*<View style={{
             marginTop: 10,
             padding: '2%',
             flexDirection: 'row', 
@@ -133,8 +139,27 @@ const GalleryScreen = () => {
                 onPress={() => onLabelEditing()}>
           New label
         </Button>
-      </View> 
-      <View style={{ flex : 5,
+      </View> */}
+      <View style={{flex: 1, 
+                    flexDirection: 'row', 
+                    alignItems: 'center', 
+                    justifyContent: 'center'}}>
+        <Button style={{marginHorizontal: '10%'}}
+                icon='filter' mode='contained' 
+                color='#5c80ac' 
+                labelStyle={{ color: '#cccccc'}} 
+                onPress={showFilter}>
+          Filter
+        </Button>
+        <Button style={{marginHorizontal: '10%'}}
+                icon='sort-variant' mode='contained' 
+                color='#5c80ac' 
+                labelStyle={{ color: '#cccccc'}} 
+                onPress={showSort}>
+          Sort
+        </Button>
+      </View>
+      <View style={{ flex : 10,
                     alignItems: 'center' }}>
         <FlatList
           numColumns={4}
@@ -176,6 +201,95 @@ const GalleryScreen = () => {
               onStateChange={(state) => onStateChange(state.open)}
               onPress={() => {if (open) {}}}
             />
+            <Dialog visible={visibleFilter}
+                  dismissable={false}
+                  style={{backgroundColor: '#cccccc'}}>
+              <Dialog.Title style={{color: '#5c80ac'}}>Filter images</Dialog.Title>
+              <Dialog.Content>
+                <Surface style={{
+                      backgroundColor: '#5c80ac',
+                      padding: 8,
+                      marginVertical: '3%',
+                      //alignItems: 'center',
+                      justifyContent: 'center',
+                      elevation: 4}}>                        
+                    <Subheading style={{padding: 5}}>Location</Subheading>
+                </Surface>
+                <Surface style={{
+                      backgroundColor: '#5c80ac',
+                      padding: 8,                      
+                      marginVertical: '3%',
+                      //alignItems: 'center',
+                      justifyContent: 'center',
+                      elevation: 4}}>
+                    <Subheading style={{padding: 5}}>Date</Subheading>
+                </Surface>
+                <Surface style={{
+                      backgroundColor: '#5c80ac',
+                      padding: 8,
+                      marginVertical: '3%',
+                      //alignItems: 'center',
+                      justifyContent: 'center',
+                      elevation: 4}}>
+                    <Subheading style={{padding: 5}}>Label</Subheading>
+                    <View style={{
+                          marginTop: 10,
+                          padding: '2%',
+                          flexDirection: 'row', 
+                          flexWrap: 'wrap',
+                          alignItems: 'center', 
+                          justifyContent: 'center', 
+                          }}>
+                      {
+                      labelState.labels.map((item) => {
+                        return (
+                            <Chip
+                              children={item.text}
+                              mode="outlined" 
+                              textStyle={{ color:'white',fontSize: 15 }}
+                              style={{ margin: 4, backgroundColor: item.color }}
+                              key={item.id}
+                              onPress={() => {}}
+                              onLongPress={() => {}}
+                              />
+                        );
+                      })}
+                    </View>
+                </Surface>
+              </Dialog.Content>
+              <Dialog.Actions>
+                <Button color='#5c80ac' onPress={hideFilter}>Cancel</Button>
+                <Button color='#5c80ac' onPress={() => {}}>Confirm</Button>
+              </Dialog.Actions>
+					  </Dialog>
+            <Dialog visible={visibleSort}
+                  dismissable={false}
+                  style={{backgroundColor: '#cccccc'}}>
+              <Dialog.Title style={{color: '#5c80ac'}}>Sort images</Dialog.Title>
+              <Dialog.Content style={{backgroundColor: '#5c80ac'}}>
+                <RadioButton.Group onValueChange={value => setSortingValue(value)} value={sortingValue}>
+                  <RadioButton.Item label="Location" 
+                                    value="location" 
+                                    color='#ffffff'/>
+                  <RadioButton.Item label="Date" 
+                                    value="date" 
+                                    color='#ffffff'/>
+                </RadioButton.Group>
+                <Divider style={{height: 2, marginVertical: '3%'}}/>
+                <RadioButton.Group onValueChange={value => setSortingOrder(value)} value={sortingOrder}>
+                  <RadioButton.Item label="Ascending" 
+                                    value="ascending" 
+                                    color='#ffffff'/>
+                  <RadioButton.Item label="Descending" 
+                                    value="descending" 
+                                    color='#ffffff'/>
+                </RadioButton.Group>
+              </Dialog.Content>
+              <Dialog.Actions>
+                <Button color='#5c80ac' onPress={hideSort}>Cancel</Button>
+                <Button color='#5c80ac' onPress={() => {}}>Confirm</Button>
+              </Dialog.Actions>
+					  </Dialog>
           </Portal>
         </Provider>
       </View>

@@ -1,8 +1,9 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/core';
 import React, { ReactElement } from 'react';
 import { View, Text, Image, useWindowDimensions } from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import ImageZoom from 'react-native-image-pan-zoom';
-import { Badge, Button, Chip, Dialog, Divider, FAB, Modal, Paragraph, Portal, Provider } from 'react-native-paper';
+import { Badge, Button, Chip, DataTable, Dialog, FAB, IconButton, Subheading, Portal, Provider } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { Photo } from '../interfaces/photo';
 import { RootState } from '../storage';
@@ -25,9 +26,14 @@ const FullImageScreen = (): ReactElement => {
 
 	const actLabels = labelState.labels.filter(label => photoObject.labels.includes(label.id));
 	const otherLabels = labelState.labels.filter(label => !(photoObject.labels.includes(label.id)));
-	const photoDate = photoObject.createDate != undefined ? photoObject.createDate : "No date information";	
-	const photoCountry = photoObject.country != undefined ? photoObject.country : "No country information";
-	const photoCity = photoObject.city != undefined ? photoObject.city : "No city information";
+	const photoDate = photoObject.createDate ?? "No date information";	
+	const photoCountry = photoObject.country ?? "No country information";
+	const photoCity = photoObject.city ?? "No city information";
+
+	const onLabelEditing = (propLabel?: string) => {
+		const checkId = propLabel ? propLabel : "";
+		navigation.navigate('Editing label', {id: checkId});
+	}
 
 	const [state, setState] = React.useState( false );
 	const onStateChange = (open: boolean) => setState( open );
@@ -69,7 +75,7 @@ const FullImageScreen = (): ReactElement => {
 					color={'#cccccc'}
 					visible={true}
 					open={open}
-					icon={open ? 'close' : 'plus'}
+					icon={open ? 'close' : 'dots-horizontal'}
 					actions={[
 						{
 							icon: 'information-outline',
@@ -100,37 +106,53 @@ const FullImageScreen = (): ReactElement => {
 						onDismiss={hideInfo}
 						style={{backgroundColor: '#cccccc'}}>
 						<Dialog.Title style={{color: '#5c80ac'}}>About photo</Dialog.Title>
-						<Dialog.Content>
-						<Paragraph style={{padding: 5, color: '#5c80ac'}}>Date: {photoDate}</Paragraph>
-						<Paragraph style={{padding: 5, color: '#5c80ac'}}>Country: {photoCountry}</Paragraph>						
-						<Paragraph style={{padding: 5, color: '#5c80ac'}}>City: {photoCity}</Paragraph>
-						<Paragraph style={{padding: 5, color: '#5c80ac'}}>Labels: {actLabels.length === 0 && "No labels"}</Paragraph>
+						<Dialog.Content style={{backgroundColor: '#5c80ac'}}>
+						<DataTable>
+							<DataTable.Row>
+								<DataTable.Cell>Date:</DataTable.Cell>
+      							<DataTable.Cell>{photoDate}</DataTable.Cell>
+							</DataTable.Row>
+							<DataTable.Row>
+								<DataTable.Cell>Country</DataTable.Cell>
+      							<DataTable.Cell>{photoCountry}</DataTable.Cell>
+							</DataTable.Row>
+							<DataTable.Row>
+								<DataTable.Cell>City:</DataTable.Cell>
+      							<DataTable.Cell>{photoCity}</DataTable.Cell>
+							</DataTable.Row>
+							<DataTable.Row>
+								<DataTable.Cell >Labels:</DataTable.Cell>
+      							<DataTable.Cell>
+									{actLabels.length === 0 && "No labels"}		
+								</DataTable.Cell>
+							</DataTable.Row>
 							<View style={{
 									flexDirection: 'row', 
 									flexWrap: 'wrap', 
-									justifyContent: 'flex-start', 
-									}}>
-								{
-								actLabels.map((item) => {
-								return (
-									<Chip
-										children={item.text}
-										mode="outlined" 
-										textStyle={{ color:'white',fontSize: 15 }}
-										style={{ margin: 4, backgroundColor: item.color }}
-										key={item.id}
-										/>
-									);
-								})}							
-      						</View>					
+									justifyContent: 'center', 
+									}}>						  
+									{
+									actLabels.map((item) => {
+									return (
+										<Chip
+											children={item.text}
+											mode="outlined" 
+											textStyle={{ color:'white',fontSize: 15 }}
+											style={{ margin: 4, backgroundColor: item.color }}
+											key={item.id}
+											/>
+										);
+									})}
+									</View>
+						</DataTable>
 						</Dialog.Content>
 					</Dialog>
 					<Dialog visible={visibleLabel}
 						dismissable={false}
 						style={{backgroundColor: '#cccccc'}}>
 						<Dialog.Title style={{color: '#5c80ac'}}>Modify labels</Dialog.Title>
-						<Dialog.Content>							
-							<Paragraph style={{padding: 5, color: '#5c80ac'}}>Labels of the photo:</Paragraph>
+						<Dialog.Content style={{backgroundColor: '#5c80ac'}}>							
+							<Subheading style={{padding: 5}}>Labels of the photo:</Subheading>
 							<View style={{
 									flexDirection: 'row', 
 									flexWrap: 'wrap', 
@@ -146,11 +168,13 @@ const FullImageScreen = (): ReactElement => {
 										style={{ margin: 4, backgroundColor: item.color }}
 										key={item.id}
 										onClose={() => dispatch(commonRemoveLabelFromPhoto(photoObject.id, item.id))}
+										onPress={() => {}}
+										onLongPress={() => onLabelEditing(item.id)}
 										/>
 									);
 								})}							
       						</View>					
-							<Paragraph style={{padding: 5, color: '#5c80ac'}}>Other labels:</Paragraph>
+							<Subheading style={{padding: 5}}>Other labels:</Subheading>
 							<View style={{
 									flexDirection: 'row', 
 									flexWrap: 'wrap', 
@@ -166,9 +190,16 @@ const FullImageScreen = (): ReactElement => {
 										style={{ margin: 4, backgroundColor: item.color }}
 										key={item.id}
 										onPress={() => dispatch(commonAddLabelToPhoto(photoObject.id, item.id))}
+										onLongPress={() => onLabelEditing(item.id)}
 										/>
 									);
-								})}							
+								})}		
+								<IconButton
+									icon="plus"
+									color='#cccccc'
+									size={20}
+									onPress={() => onLabelEditing()}
+								/>					
       						</View>
 						</Dialog.Content>
 						<Dialog.Actions>
