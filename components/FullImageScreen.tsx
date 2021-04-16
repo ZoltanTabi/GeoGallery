@@ -1,6 +1,7 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/core';
 import React, { ReactElement } from 'react';
 import { View, Text, Image, useWindowDimensions } from 'react-native';
+import ImageZoom from 'react-native-image-pan-zoom';
 import { Badge, Button, Chip, Dialog, Divider, FAB, Modal, Paragraph, Portal, Provider } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { Photo } from '../interfaces/photo';
@@ -13,6 +14,7 @@ const FullImageScreen = (): ReactElement => {
 	const dispatch = useDispatch();
 	const navigation = useNavigation();
     const windowWidth = useWindowDimensions().width;
+	const windowHeight = useWindowDimensions().height;
 
     const route = useRoute<RouteProp<{ params: { id: string } }, 'params'>>();
 
@@ -52,8 +54,13 @@ const FullImageScreen = (): ReactElement => {
 	return (
 		<View style={{ flex: 1}}>
 			<View style={{ flex: 18, justifyContent: 'center', alignItems: 'center' }}>
-				<Image source={{ uri: photoObject.imageUri }}
-					style={{ height: ((Math.round(windowWidth)/photoObject.width) * photoObject.height), width: Math.round(windowWidth)}} />
+				<ImageZoom imageHeight={((Math.round(windowWidth)/photoObject.width) * photoObject.height)}
+							imageWidth={Math.round(windowWidth)}
+							cropWidth={windowWidth}
+                       		cropHeight={windowHeight}>
+					<Image source={{ uri: photoObject.imageUri }}
+						style={{ height: ((Math.round(windowWidth)/photoObject.width) * photoObject.height), width: Math.round(windowWidth)}} />
+				</ImageZoom>
 			</View>			
 			<Provider>
 				<Portal>
