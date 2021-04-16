@@ -51,6 +51,7 @@ import LabelEditingScreen from './components/LabelEditingScreen';
 import { createStackNavigator } from '@react-navigation/stack';
 import { color } from 'react-native-reanimated';
 import FullImageScreen from './components/FullImageScreen';
+import { Screen } from './enums/screen';
 
 const Tab = createMaterialBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -64,14 +65,14 @@ const NavBar = () => {
 
   return (
     <Tab.Navigator
-      initialRouteName="GalleryScreen"
+      initialRouteName={Screen.GalleryScreen}
       activeColor="#cccccc"
       inactiveColor="#333333"
       barStyle={{ backgroundColor: '#5c80ac' }}
       shifting={true}
     >
       <Tab.Screen
-        name="GalleryScreen"
+        name={Screen.GalleryScreen}
         component={GalleryScreen}
         options={{
           tabBarLabel: 'Gallery',
@@ -82,7 +83,7 @@ const NavBar = () => {
         }}
       />
       <Tab.Screen
-        name="MapScreen"
+        name={Screen.MapScreen}
         component={MapScreen}
         options={{
           tabBarColor: '#5cac7b',
@@ -141,17 +142,17 @@ export default function App() {
       <PaperProvider>
         <NavigationContainer>
           <Stack.Navigator>
-            <Stack.Screen name="GeoGallery" component={NavBar} 
+            <Stack.Screen name={Screen.GeoGallery} component={NavBar} 
                           options={{
                             headerShown: false
                           }}/>
-            <Stack.Screen name="Editing label" component={LabelEditingScreen} 
+            <Stack.Screen name={Screen.EditingLabel} component={LabelEditingScreen} 
                           options={{
                             headerTintColor: '#cccccc',
                             headerStyle: { backgroundColor: '#5c80ac' },
                             headerLeft: ()=> null
                           }}/>
-            <Stack.Screen name="Full image" component={FullImageScreen} 
+            <Stack.Screen name={Screen.FullImage} component={FullImageScreen} 
                           options={{
                             headerShown: false
                           }}/>
