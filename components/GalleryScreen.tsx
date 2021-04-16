@@ -134,18 +134,17 @@ const GalleryScreen = () => {
           New label
         </Button>
       </View> 
-      <View style={{ flex : 5, 
-                    padding: '1%',
+      <View style={{ flex : 5,
                     alignItems: 'center' }}>
         <FlatList
-          numColumns={2}
+          numColumns={4}
           data={photoState.photos}
           keyExtractor={item => item.id}
           renderItem={({item})=>{
             return (
               <Pressable onPress={() => onFullImage(item.id)}>
                 <Image source={{uri: item.imageUri}} 
-                        style={{ height: 180, width: 180, margin: '0.8%' }}/>
+                        style={{ height: 90, width: 90, marginHorizontal: '0.5%', marginVertical: '2%' }}/>
               </Pressable>
             )
           }}

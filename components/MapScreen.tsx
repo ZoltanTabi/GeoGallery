@@ -184,7 +184,7 @@ const MapScreen = (): ReactElement => {
   }
 
   const getIcon = (open: boolean): string => {
-    return open || drawingMode.enabled || circle || rectangle ? 'close' : 'pencil';
+    return open || drawingMode.enabled || circle || rectangle ? 'close' : 'image-size-select-large';
   }
 
   const onFabStateChange = (stateOpen: boolean) => {
@@ -273,7 +273,7 @@ const MapScreen = (): ReactElement => {
             icon={getIcon(fabProps.open)}
             actions={[
               {
-                icon: 'circle-outline',
+                icon: 'selection-ellipse',
                 label: 'Circle',
                 color: '#cccccc',
                 style: {backgroundColor: '#5cac7b'},
@@ -281,7 +281,7 @@ const MapScreen = (): ReactElement => {
                 small: false
               },
               {
-                icon: 'rectangle-outline',
+                icon: 'selection',
                 label: 'Rectangle',
                 color: '#cccccc',
                 style: {backgroundColor: '#5cac7b'},
