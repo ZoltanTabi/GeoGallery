@@ -6,11 +6,11 @@ import { onlyUnique } from './functions';
 var pointInPolygon = require('point-in-polygon');
 
 export function getCountries(photoState: PhotoState): string[] {
-    return photoState.photos.map(x => x.country).filter(x => x).filter(onlyUnique);
+    return photoState.photos.map(x => x.country).filter(x => x).filter(onlyUnique).map(x => x as string);
 }
 
 export function getCities(photoState: PhotoState): string[] {
-    return photoState.photos.map(x => x.city).filter(x => x).filter(onlyUnique);
+    return photoState.photos.map(x => x.city).filter(x => x).filter(onlyUnique).map(x => x as string);
 }
 
 export function galleryFilter(photoState: PhotoState, searchTermState: SearchTermState): Photo[] {
