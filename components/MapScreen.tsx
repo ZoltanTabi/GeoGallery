@@ -2,9 +2,10 @@ import { useNavigation } from '@react-navigation/native';
 import React, { ReactElement, useState } from 'react';
 import { Image, PermissionsAndroid, StyleSheet, View } from 'react-native';
 import MapView from "react-native-map-clustering";
-import { Region, PROVIDER_GOOGLE, Marker, LatLng, MapEvent, Circle, MapCircleProps, Polygon, MapPolygonProps, MapTypes } from 'react-native-maps';
+import { Region, PROVIDER_GOOGLE, Marker, LatLng, MapEvent, Circle, MapCircleProps, Polygon, MapPolygonProps, MapTypes, Heatmap, WeightedLatLng } from 'react-native-maps';
 import { Button, Dialog, FAB, Paragraph, Portal, Provider, RadioButton, Subheading } from 'react-native-paper';
 import { useSelector } from 'react-redux';
+import { ClusterType } from '../enums/clusterType';
 import { MapStyle } from '../enums/mapStyle';
 import { distanceByLatLng, getDistance } from '../helpers/drawing';
 import { devConsoleLog, onlyUnique } from '../helpers/functions';
@@ -22,8 +23,10 @@ const MapScreen = (): ReactElement => {
   const photoState = useSelector((state: RootState) => state.photoState);
 
   const mapStyles: {code: MapStyle; label: string;}[] = [{code: MapStyle.standard, label: 'Deafult'}, {code: MapStyle.hybrid, label: 'Satellite'}, {code: MapStyle.terrain, label: 'Terrain'}, {code: MapStyle.night, label: 'Night'}];
+  const clusterTypes: {code: ClusterType; label: string;}[] = [{code: ClusterType.cluster, label: 'Clustering'}, {code: ClusterType.heatMap, label: 'Heat Map'}];
 
   const [style, setStyle] = useState<MapStyle>(MapStyle.standard);
+  const [clusterType, setClusterType] = useState<ClusterType>(ClusterType.cluster);
   const [region, setRegion] = useState<Region>( {latitude: 47.497913, longitude: 19.040236, latitudeDelta: 2, longitudeDelta: 2 });
   const [fabProps, setFabProps] = useState<{open: boolean, visible: boolean}>({open: false, visible: true});
   const [drawingMode, setDrawingMode] = useState<{type: DrawingMode, enabled: boolean}>({type: DrawingMode.None, enabled: false})
@@ -33,6 +36,12 @@ const MapScreen = (): ReactElement => {
   const [visibleMapOption, setVisibleMapOption] = useState(false);
 	const showMapOption = () => setVisibleMapOption(true);	
 	const hideMapOption = () => setVisibleMapOption(false);
+
+  const weightedLatLngs: WeightedLatLng [] = photoState.photos.filter(x => x.latitude && x.longitude).map(photo => ({
+    latitude: photo.latitude as number,
+    longitude: photo.longitude as number,
+    weight: 1
+  }))
 
   const onMapReady = () => {
     PermissionsAndroid.request(
@@ -239,8 +248,10 @@ const MapScreen = (): ReactElement => {
         showsMyLocationButton={false}
         mapType={(style === MapStyle.night ? MapStyle.standard : style) as MapTypes}
         customMapStyle={(style === MapStyle.night ? nightMapStyle : [])}
+        clusteringEnabled={clusterType === ClusterType.cluster}
       >
         {
+          clusterType === ClusterType.cluster &&
           photoState.photos.filter(x => x.latitude && x.longitude).map((item) => {
             return (
               <Marker
@@ -254,6 +265,12 @@ const MapScreen = (): ReactElement => {
               </Marker>
             );
           })
+        }
+        {
+          clusterType === ClusterType.heatMap &&
+          <Heatmap
+            points={weightedLatLngs}
+          />
         }
         {
           drawingMode && drawingMode.type === DrawingMode.Circle && circle &&
@@ -322,6 +339,16 @@ const MapScreen = (): ReactElement => {
               <RadioButton.Group onValueChange={value => setStyle(value as MapStyle)} value={style}>
                 {
                   mapStyles.map((item) => {
+                    return (
+                      <RadioButton.Item key={item.code} label={item.label} value={item.code} color='#5cac7b' uncheckedColor='#5cac7b' labelStyle={{color: '#5cac7b'}} />
+                    )
+                  })
+                }
+              </RadioButton.Group>
+              <Subheading style={{color: '#5cac7b'}}>Cluster type</Subheading>
+              <RadioButton.Group onValueChange={value => setClusterType(value as ClusterType)} value={clusterType}>
+                {
+                  clusterTypes.map((item) => {
                     return (
                       <RadioButton.Item key={item.code} label={item.label} value={item.code} color='#5cac7b' uncheckedColor='#5cac7b' labelStyle={{color: '#5cac7b'}} />
                     )
