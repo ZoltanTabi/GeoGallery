@@ -1,11 +1,11 @@
 import { MapCircleProps, LatLng } from 'react-native-maps';
 
 export interface SearchTerm {
-    countries?: string[];
-    cities?: string[];
+    countries: string[];
+    cities: string[];
     dateTo?: Date;
     dateFrom?: Date;
-    labels?: string[];
+    labels: string[];
     circle?: MapCircleProps;
     polygon?: LatLng[];
     photoIdsByClusterFilter?: string[];

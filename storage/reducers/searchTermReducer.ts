@@ -6,7 +6,7 @@ import {
 } from '../../interfaces/searchTerm';
 
 const initialState: SearchTermState = {
-    searchTerm: { }
+    searchTerm: { countries: [], cities: [], labels: [] }
 }
 
 export function searchTermReducer(state = initialState, action: SearchTermTypes): SearchTermState {
