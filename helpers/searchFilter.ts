@@ -2,7 +2,16 @@ import { Photo, PhotoState } from '../interfaces/photo';
 import { SearchTerm, SearchTermState } from '../interfaces/searchTerm';
 import { MapCircleProps, LatLng } from 'react-native-maps';
 import { getDistance } from './drawing';
+import { onlyUnique } from './functions';
 var pointInPolygon = require('point-in-polygon');
+
+export function getCountries(photoState: PhotoState): string[] {
+    return photoState.photos.map(x => x.country).filter(x => x).filter(onlyUnique);
+}
+
+export function getCities(photoState: PhotoState): string[] {
+    return photoState.photos.map(x => x.city).filter(x => x).filter(onlyUnique);
+}
 
 export function galleryFilter(photoState: PhotoState, searchTermState: SearchTermState): Photo[] {
     let photos = [...photoState.photos];
