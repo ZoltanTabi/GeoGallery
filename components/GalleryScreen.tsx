@@ -268,6 +268,9 @@ const GalleryScreen = () => {
               <Dialog.Title style={{color: '#5c80ac'}}>Sort images</Dialog.Title>
               <Dialog.Content style={{backgroundColor: '#5c80ac'}}>
                 <RadioButton.Group onValueChange={value => setSortingValue(value)} value={sortingValue}>
+                <RadioButton.Item label="None" 
+                                    value="none" 
+                                    color='#ffffff'/>
                   <RadioButton.Item label="Location" 
                                     value="location" 
                                     color='#ffffff'/>
@@ -279,15 +282,16 @@ const GalleryScreen = () => {
                 <RadioButton.Group onValueChange={value => setSortingOrder(value)} value={sortingOrder}>
                   <RadioButton.Item label="Ascending" 
                                     value="ascending" 
-                                    color='#ffffff'/>
+                                    color='#ffffff'
+                                    disabled={sortingValue==='none'}/>
                   <RadioButton.Item label="Descending" 
                                     value="descending" 
-                                    color='#ffffff'/>
+                                    color='#ffffff'
+                                    disabled={sortingValue==='none'}/>
                 </RadioButton.Group>
               </Dialog.Content>
               <Dialog.Actions>
-                <Button color='#5c80ac' onPress={hideSort}>Cancel</Button>
-                <Button color='#5c80ac' onPress={() => {}}>Confirm</Button>
+                <Button color='#5c80ac' onPress={hideSort}>Close</Button>
               </Dialog.Actions>
 					  </Dialog>
           </Portal>
