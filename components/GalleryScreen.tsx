@@ -37,6 +37,7 @@ import Geolocation from '@react-native-community/geolocation';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import { updateSearchTerm } from '../storage/actions/searchTermAction';
 import DatePicker from 'react-native-date-picker'
+import { getCountriesAndCities } from '../helpers/searchFilter';
 
 const GalleryScreen = () => {
 
@@ -55,6 +56,25 @@ const GalleryScreen = () => {
   useEffect(() => {
     setTempFilterState({...filterState.searchTerm});
   }, [filterState]);
+
+  const [citiesCheckedState, setCitiesCheckedState] = React.useState(getCountriesAndCities(photoState));
+  useEffect(() => {
+    getCountriesAndCities(photoState).forEach(x => {
+      const country = citiesCheckedState.find(y => y.country === x.country);
+      if (country) {
+        x.cities.forEach(y => {
+          const city = country.cities.find(z => z.name === y.name);
+          if (!city) {
+            country.cities.push(y);
+          }
+        });
+      } else {
+        citiesCheckedState.push(x);
+      }
+    });
+
+    setCitiesCheckedState([...citiesCheckedState]);
+  }, [photoState]);
 
   const [state, setState] = React.useState( false );
   const onStateChange = (open: boolean) => setState( open );

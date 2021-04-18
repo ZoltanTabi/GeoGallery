@@ -32,12 +32,12 @@ export function mapFilter(photoState: PhotoState, searchTermState: SearchTermSta
     return filterByDateAndlabels(photoState.photos.filter(x => x.latitude && x.longitude), searchTermState.searchTerm);
 }
 
-export function getCountriesAndCities(photoState: PhotoState): {country: string; cities: {id: string; name: string}[]}[] {
-    const countriesAndCities: {country: string; cities: {id: string; name: string}[]}[] = [];
+export function getCountriesAndCities(photoState: PhotoState): {country: string; cities: {name: string; checked: boolean;}[]}[] {
+    const countriesAndCities: {country: string; cities: {name: string; checked: boolean;}[]}[] = [];
     
     getCountriesAndCitiesWithPhotosAscending(photoState).map(x => {
-        const cities: {id: string; name: string}[] = [];
-        x.cities.forEach(city => cities.push({id: city.city, name: city.city}));
+        const cities: {name: string; checked: boolean;}[] = [];
+        x.cities.forEach(city => cities.push({name: city.city, checked: false}));
 
         countriesAndCities.push({country: x.country, cities: cities});
     });
