@@ -500,9 +500,9 @@ const GalleryScreen = () => {
                   <RadioButton.Item label="Location" 
                                     value="location" 
                                     color='#ffffff'/>
-                  <RadioButton.Item label="Date" 
+                  {/*<RadioButton.Item label="Date" 
                                     value="date" 
-                                    color='#ffffff'/>
+                                    color='#ffffff'/>*/}
                 </RadioButton.Group>
                 <Divider style={{height: 2, marginVertical: '3%'}}/>
                 <RadioButton.Group onValueChange={value => setSortingOrder(value)} value={sortingOrder}>

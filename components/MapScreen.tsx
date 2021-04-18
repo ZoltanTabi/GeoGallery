@@ -3,7 +3,7 @@ import React, { ReactElement, useState } from 'react';
 import { Image, PermissionsAndroid, StyleSheet, View } from 'react-native';
 import MapView from "react-native-map-clustering";
 import { Region, PROVIDER_GOOGLE, Marker, LatLng, MapEvent, Circle, MapCircleProps, Polygon, MapPolygonProps, MapTypes, Heatmap, WeightedLatLng } from 'react-native-maps';
-import { Button, Dialog, FAB, Paragraph, Portal, Provider, RadioButton, Subheading } from 'react-native-paper';
+import { Button, Dialog, Divider, FAB, Paragraph, Portal, Provider, RadioButton, Subheading } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { ClusterType } from '../enums/clusterType';
 import { DrawingMode } from '../enums/drawingMode';
@@ -39,7 +39,7 @@ const MapScreen = (): ReactElement => {
 	const showMapOption = () => setVisibleMapOption(true);	
 	const hideMapOption = () => setVisibleMapOption(false);
 
-  const weightedLatLngs: WeightedLatLng [] = photoState.photos.filter(x => x.latitude && x.longitude).map(photo => ({
+  const weightedLatLngs: WeightedLatLng [] = photos.filter(x => x.latitude && x.longitude).map(photo => ({
     latitude: photo.latitude as number,
     longitude: photo.longitude as number,
     weight: 1
@@ -234,7 +234,7 @@ const MapScreen = (): ReactElement => {
         rotateEnabled={false}
         pitchEnabled={false}
         showsCompass={false}
-        showsUserLocation={true}
+        showsUserLocation={false}
         onClusterPress={onClusterPress}
         preserveClusterPressBehavior={true}
         scrollEnabled={!drawingMode.enabled}
@@ -335,23 +335,24 @@ const MapScreen = (): ReactElement => {
 						style={{backgroundColor: '#cccccc'}}
           >
 						<Dialog.Title style={{color: '#5cac7b'}}>Map options</Dialog.Title>
-            <Dialog.Content>
-              <Subheading style={{color: '#5cac7b'}}>Map type</Subheading>
+            <Dialog.Content style={{backgroundColor: '#5cac7b'}}>
+              {/*<Subheading style={{color: '#ffffff'}}>Map type</Subheading>*/}
               <RadioButton.Group onValueChange={value => setStyle(value as MapStyle)} value={style}>
                 {
                   mapStyles.map((item) => {
                     return (
-                      <RadioButton.Item key={item.code} label={item.label} value={item.code} color='#5cac7b' uncheckedColor='#5cac7b' labelStyle={{color: '#5cac7b'}} />
+                      <RadioButton.Item key={item.code} label={item.label} value={item.code} color='#ffffff' uncheckedColor='#ffffff' labelStyle={{color: '#ffffff'}} />
                     )
                   })
                 }
               </RadioButton.Group>
-              <Subheading style={{color: '#5cac7b'}}>Cluster type</Subheading>
+              <Divider style={{height: 2, marginVertical: '3%'}}/>
+              {/*<Subheading style={{color: '#ffffff'}}>Cluster type</Subheading>*/}
               <RadioButton.Group onValueChange={value => setClusterType(value as ClusterType)} value={clusterType}>
                 {
                   clusterTypes.map((item) => {
                     return (
-                      <RadioButton.Item key={item.code} label={item.label} value={item.code} color='#5cac7b' uncheckedColor='#5cac7b' labelStyle={{color: '#5cac7b'}} />
+                      <RadioButton.Item key={item.code} label={item.label} value={item.code} color='#ffffff' uncheckedColor='#ffffff' labelStyle={{color: '#ffffff'}} />
                     )
                   })
                 }
