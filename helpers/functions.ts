@@ -48,10 +48,10 @@ export async function imageToPhoto(image: Image, type: ImageType, latLng?: { lat
         }
     }
 
-    devConsoleLog(latLng);
+    /*devConsoleLog(latLng);
     devConsoleLog('address: ' + address);
     devConsoleLog('country: ' + country);
-    devConsoleLog('city: ' + city);
+    devConsoleLog('city: ' + city);*/
 
     return {
         id: getNewId(),

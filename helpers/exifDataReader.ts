@@ -36,12 +36,11 @@ export const getLatLongFromExif = (exif: any) => {
 export const getDateTimeFromExif = (exif: any) => {
     if (exif) {
         let dateTime: string = exif.DateTime;
-        if (!dateTime) {
+        /*if (!dateTime) {
             dateTime = exif.DateTimeDigitized;
-        }
+        }*/
         if (dateTime) {
             const t = dateTime.split(/[:| ]/);
-            return new Date(Number(t[0]), (Number(t[1])-1), Number(t[2]), Number(t[3]), Number(t[4]), Number(t[5]));
         }
     }
 }
