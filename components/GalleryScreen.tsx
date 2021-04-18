@@ -163,6 +163,7 @@ const GalleryScreen = () => {
     filterState.searchTerm.dateTo = tempFilterState.dateTo;
     filterState.searchTerm.dateFrom = tempFilterState.dateFrom;
     filterState.searchTerm.labels = tempFilterState.labels;
+    dispatch(updateSearchTerm(filterState.searchTerm));
     hideFilter();
   }
 
@@ -316,85 +317,89 @@ const GalleryScreen = () => {
                   dismissable={false}
                   style={{backgroundColor: '#cccccc'}}>
               <Dialog.Title style={{color: '#5c80ac'}}>Filter images</Dialog.Title>
-              <Dialog.Content>
-                <Surface style={{
-                      backgroundColor: '#5c80ac',
-                      padding: 8,
-                      marginVertical: '3%',
-                      //alignItems: 'center',
-                      justifyContent: 'center',
-                      elevation: 4}}>                        
-                    <Subheading style={{padding: 5}}>Location</Subheading>
-                    <Pressable 
-                        style={{borderColor: '#cccccc', borderWidth: 0.2,  minHeight: '10%', justifyContent: 'center'}} 
-                        onPress={showCheck}>
-                      <Subheading style={{margin: '5%'}}>
-                        {tempFilterState.cities.join(', ')}
-                      </Subheading>
-                    </Pressable>
-                </Surface>
-                <Surface style={{
-                      backgroundColor: '#5c80ac',
-                      padding: 8,                      
-                      marginVertical: '3%',
-                      //alignItems: 'center',
-                      justifyContent: 'center',
-                      elevation: 4}}>
-                    <Subheading style={{padding: 5}}>Date</Subheading>
-                    <View>
-                    <Text style={{color: '#ffffff'}}>From:</Text>
-                    <Button mode='outlined' color='#ffffff' onPress={showForm}>{tempFilterState.dateFrom?.toDateString()}</Button>
-                    <Text style={{color: '#ffffff'}}>To:</Text>
-                    <Button mode='outlined' color='#ffffff' onPress={showTo}>{tempFilterState.dateTo?.toDateString()}</Button>
-                  </View>
-                </Surface>
-                <Surface style={{
-                      backgroundColor: '#5c80ac',
-                      padding: 8,
-                      marginVertical: '3%',
-                      //alignItems: 'center',
-                      justifyContent: 'center',
-                      elevation: 4}}>
-                    <Subheading style={{padding: 5}}>Label</Subheading>
-                    <View style={{
-                          marginTop: 10,
-                          padding: '2%',
-                          flexDirection: 'row', 
-                          flexWrap: 'wrap',
-                          alignItems: 'center', 
-                          justifyContent: 'center', 
-                          }}>
-                      {
-                      labelState.labels.map((item) => {
-                        return (
-                            <Chip
-                              children={item.text}
-                              mode="outlined"
-                              selected={(tempFilterState.labels.includes(item.id))}
-                              textStyle={{ color:'white',fontSize: 15 }}
-                              style={{ margin: 4, backgroundColor: item.color }}
-                              key={item.id}
-                              onPress={() => onLabelPress(item)}
-                              />
-                        );
-                      })}
-                    </View>
-                </Surface>
-                { (filterState.searchTerm.circle !== undefined || 
-                  filterState.searchTerm.polygon !== undefined ||
-                  filterState.searchTerm.photoIdsByClusterFilter !== undefined) &&
-                  <Surface style={{
-                    backgroundColor: '#5c80ac',
-                    padding: 8,            
-                    flexDirection: 'row',          
-                    marginVertical: '3%',
-                    //alignItems: 'center',
-                    //justifyContent: 'center',
-                    elevation: 4}}>
-                    <Button mode='outlined' icon='close' color='#ffffff' onPress={() => {onMapSelectionPress()}}>Selection from map</Button>
-                  </Surface>
-                }
-              </Dialog.Content>
+              <Dialog.ScrollArea style={{height: '60%'}}>
+                <ScrollView >
+                  <View style={{height: '50%'}}>
+                    <Surface style={{
+                          backgroundColor: '#5c80ac',
+                          padding: 8,
+                          marginVertical: '3%',
+                          //alignItems: 'center',
+                          justifyContent: 'center',
+                          elevation: 4}}>                        
+                        <Subheading style={{padding: 5}}>Location</Subheading>
+                        <Pressable 
+                            style={{borderColor: '#cccccc', borderWidth: 0.2,  minHeight: '10%', justifyContent: 'center'}} 
+                            onPress={showCheck}>
+                          <Subheading style={{margin: '5%'}}>
+                            {tempFilterState.cities.join(', ')}
+                          </Subheading>
+                        </Pressable>
+                    </Surface>
+                    <Surface style={{
+                          backgroundColor: '#5c80ac',
+                          padding: 8,                      
+                          marginVertical: '3%',
+                          //alignItems: 'center',
+                          justifyContent: 'center',
+                          elevation: 4}}>
+                        <Subheading style={{padding: 5}}>Date</Subheading>
+                        <View>
+                        <Text style={{color: '#ffffff'}}>From:</Text>
+                        <Button mode='outlined' color='#ffffff' onPress={showForm}>{tempFilterState.dateFrom?.toDateString()}</Button>
+                        <Text style={{color: '#ffffff'}}>To:</Text>
+                        <Button mode='outlined' color='#ffffff' onPress={showTo}>{tempFilterState.dateTo?.toDateString()}</Button>
+                      </View>
+                    </Surface>
+                    <Surface style={{
+                          backgroundColor: '#5c80ac',
+                          padding: 8,
+                          marginVertical: '3%',
+                          //alignItems: 'center',
+                          justifyContent: 'center',
+                          elevation: 4}}>
+                        <Subheading style={{padding: 5}}>Label</Subheading>
+                        <View style={{
+                              marginTop: 10,
+                              padding: '2%',
+                              flexDirection: 'row', 
+                              flexWrap: 'wrap',
+                              alignItems: 'center', 
+                              justifyContent: 'center', 
+                              }}>
+                          {
+                          labelState.labels.map((item) => {
+                            return (
+                                <Chip
+                                  children={item.text}
+                                  mode="outlined"
+                                  selected={(tempFilterState.labels.includes(item.id))}
+                                  textStyle={{ color:'white',fontSize: 15 }}
+                                  style={{ margin: 4, backgroundColor: item.color }}
+                                  key={item.id}
+                                  onPress={() => onLabelPress(item)}
+                                  />
+                            );
+                          })}
+                        </View>
+                    </Surface>
+                    { (filterState.searchTerm.circle !== undefined || 
+                      filterState.searchTerm.polygon !== undefined ||
+                      filterState.searchTerm.photoIdsByClusterFilter !== undefined) &&
+                      <Surface style={{
+                        backgroundColor: '#5c80ac',
+                        padding: 8,            
+                        flexDirection: 'row',          
+                        marginVertical: '3%',
+                        //alignItems: 'center',
+                        //justifyContent: 'center',
+                        elevation: 4}}>
+                        <Button mode='outlined' icon='close' color='#ffffff' onPress={() => {onMapSelectionPress()}}>Selection from map</Button>
+                      </Surface>
+                    }
+                  </View>                  
+                </ScrollView>
+              </Dialog.ScrollArea>
               <Dialog.Actions>
                 <Button color='#ac5c5c' onPress={() => onDeletePress()}>Delete filters</Button>
                 <Button color='#5c80ac' onPress={() => onCancelPress()}>Cancel</Button>
@@ -442,27 +447,31 @@ const GalleryScreen = () => {
                     dismissable={false}
                     style={{backgroundColor: '#cccccc'}}>
               <Dialog.Title style={{color: '#5c80ac'}}>Choose cities</Dialog.Title>
-              <Dialog.Content style={{backgroundColor: '#5c80ac'}}>
-                {citiesCheckedState.map((item) => {                    
+              <Dialog.ScrollArea style={{height: '60%',backgroundColor: '#5c80ac'}}>
+                <ScrollView>
+                  <View style={{height: '40%'}}>
+                  {citiesCheckedState.map((item) => {                    
                   return (
                     <View key={item.country}>
-                    <Title>{item.country}</Title>
-                    {item.cities.map((city) =>{
-                      return (
-                        <View key={city.name}>
-                          <Checkbox.Item 
-                            label={city.name} 
-                            status={city.checked ? 'checked' : 'unchecked'} 
-                            onPress={() => checkChanged(city.name, item.country)}
-                            color='#ffffff'
-                            uncheckedColor='#ffffff'
-                          />
-                        </View>
-                      )                         
-                  })}
-                  </View>);
-                })}       
-              </Dialog.Content>
+                      <Title>{item.country}</Title>
+                      {item.cities.map((city) =>{
+                        return (
+                          <View key={city.name}>
+                            <Checkbox.Item 
+                              label={city.name} 
+                              status={city.checked ? 'checked' : 'unchecked'} 
+                              onPress={() => checkChanged(city.name, item.country)}
+                              color='#ffffff'
+                              uncheckedColor='#ffffff'
+                            />
+                          </View>
+                        )                         
+                    })}
+                    </View>);
+                  })}       
+                  </View>
+                </ScrollView>
+              </Dialog.ScrollArea>
               <Dialog.Actions>
                 <Button color='#5c80ac' onPress={hideCheck}>Cancel</Button>
                 <Button color='#5c80ac' onPress={() => onLocationPress()}>Confirm</Button>
