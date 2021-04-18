@@ -27,6 +27,13 @@ export function onlyUnique(value: any, index: any, self: string | any[]) {
     return self.indexOf(value) === index;
 }
 
+export function groupBy(xs: any[], key: string | number) {
+    return xs.reduce(function(rv, x) {
+        (rv[x[key]] = rv[x[key]] || []).push(x);
+        return rv;
+    }, {});
+};
+
 export async function imageToPhoto(image: Image, type: ImageType, latLng?: { lat: number; lng: number; }): Promise<Photo> {
     latLng = latLng ?? getLatLongFromExif(image.exif);
     const dateTime = getDateTimeFromExif(image.exif);
