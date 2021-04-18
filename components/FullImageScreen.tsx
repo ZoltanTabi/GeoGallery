@@ -26,7 +26,7 @@ const FullImageScreen = (): ReactElement => {
 
 	const actLabels = labelState.labels.filter(label => photoObject.labels.includes(label.id));
 	const otherLabels = labelState.labels.filter(label => !(photoObject.labels.includes(label.id)));
-	const photoDate = photoObject.createDate ?? "No date information";	
+	const photoDate = photoObject.createDate ? photoObject.createDate.toDateString() : "No date information";	
 	const photoCountry = photoObject.country ?? "No country information";
 	const photoCity = photoObject.city ?? "No city information";
 
