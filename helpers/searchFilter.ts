@@ -5,7 +5,6 @@ import { getDistance } from './drawing';
 import { groupBy, onlyUnique } from './functions';
 var pointInPolygon = require('point-in-polygon');
 
-
 export function galleryFilter(photoState: PhotoState, searchTermState: SearchTermState): Photo[] {
     let photos = [...photoState.photos];
     const searchTerm = searchTermState.searchTerm;

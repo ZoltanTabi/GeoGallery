@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native';
-import React, { Children, useState } from 'react';
+import React, { Children, useEffect, useState } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -12,6 +12,7 @@ import {
   Pressable,
   Image,
   PermissionsAndroid,
+  DatePickerIOSBase,
 } from 'react-native';
 import ImageCropPicker from 'react-native-image-crop-picker';
 
@@ -34,6 +35,8 @@ import { RootState } from '../storage';
 import { addMultiplePhoto, addPhoto } from '../storage/actions/photoAction';
 import Geolocation from '@react-native-community/geolocation';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
+import { updateSearchTerm } from '../storage/actions/searchTermAction';
+import DatePicker from 'react-native-date-picker'
 
 const GalleryScreen = () => {
 
@@ -46,6 +49,12 @@ const GalleryScreen = () => {
 
   const labelState = useSelector((state: RootState) => state.labelState);
   const photoState = useSelector((state: RootState) => state.photoState);
+  const filterState = useSelector((state: RootState) => state.searchTermState);
+
+  const [tempFilterState, setTempFilterState] = React.useState({...filterState.searchTerm});
+  useEffect(() => {
+    setTempFilterState({...filterState.searchTerm});
+  }, [filterState]);
 
   const [state, setState] = React.useState( false );
   const onStateChange = (open: boolean) => setState( open );
@@ -59,8 +68,43 @@ const GalleryScreen = () => {
 	const showSort = () => setVisibleSort(true);	
 	const hideSort = () => setVisibleSort(false);
 
+  const [visibleFrom, setVisibleFrom] = React.useState(false);
+	const showForm = () => setVisibleFrom(true);	
+	const hideFrom = () => setVisibleFrom(false);
+
+  const [visibleTo, setVisibleTo] = React.useState(false);
+	const showTo = () => setVisibleTo(true);	
+	const hideTo = () => setVisibleTo(false);
+
   const [sortingValue, setSortingValue] = React.useState('location');
   const [sortingOrder, setSortingOrder] = React.useState('ascending');
+  const [fromDate, setFromDate] = useState(new Date())
+  const [toDate, setToDate] = useState(new Date())
+
+  const onLabelPress = (label : Label) => {
+    const index = tempFilterState.labels.indexOf(label.id);
+    if(index == -1)
+    {
+      tempFilterState.labels.push(label.id);
+    }
+    else
+    {
+      tempFilterState.labels.splice(index, 1);
+    }
+    setTempFilterState({...tempFilterState});
+  }
+
+  const onFromDatePress = () => {
+    tempFilterState.dateFrom = fromDate;
+    setTempFilterState({...tempFilterState});
+    hideFrom();
+  }
+
+  const onToDatePress = () => {
+    tempFilterState.dateTo = toDate;
+    setTempFilterState({...tempFilterState});
+    hideTo();
+  }
 
   const addPhotoByCamera = async () => {
     const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
@@ -169,7 +213,7 @@ const GalleryScreen = () => {
             return (
               <Pressable onPress={() => onFullImage(item.id)}>
                 <Image source={{uri: item.imageUri}} 
-                        style={{ height: 90, width: 90, marginHorizontal: '0.5%', marginVertical: '2%' }}/>
+                        style={{ height: 80, width: 80, marginHorizontal: '0.5%', marginVertical: '2%' }}/>
               </Pressable>
             )
           }}
@@ -223,6 +267,12 @@ const GalleryScreen = () => {
                       justifyContent: 'center',
                       elevation: 4}}>
                     <Subheading style={{padding: 5}}>Date</Subheading>
+                    <View>
+                    <Text style={{color: '#ffffff'}}>From:</Text>
+                    <Button mode='outlined' color='#ffffff' onPress={showForm}>{tempFilterState.dateFrom?.toDateString()}</Button>
+                    <Text style={{color: '#ffffff'}}>To:</Text>
+                    <Button mode='outlined' color='#ffffff' onPress={showTo}>{tempFilterState.dateTo?.toDateString()}</Button>
+                  </View>
                 </Surface>
                 <Surface style={{
                       backgroundColor: '#5c80ac',
@@ -245,12 +295,12 @@ const GalleryScreen = () => {
                         return (
                             <Chip
                               children={item.text}
-                              mode="outlined" 
+                              mode="outlined"
+                              selected={(tempFilterState.labels.includes(item.id))}
                               textStyle={{ color:'white',fontSize: 15 }}
                               style={{ margin: 4, backgroundColor: item.color }}
                               key={item.id}
-                              onPress={() => {}}
-                              onLongPress={() => {}}
+                              onPress={() => onLabelPress(item)}
                               />
                         );
                       })}
@@ -262,6 +312,43 @@ const GalleryScreen = () => {
                 <Button color='#5c80ac' onPress={() => {}}>Confirm</Button>
               </Dialog.Actions>
 					  </Dialog>
+
+            <Dialog visible={visibleFrom}
+                    dismissable={false}
+                    style={{backgroundColor: '#cccccc'}}>
+              <Dialog.Title style={{color: '#5c80ac'}}>Choose from</Dialog.Title>
+              <Dialog.Content>
+                <DatePicker
+                  date={fromDate}
+                  onDateChange={setFromDate}
+                  androidVariant='nativeAndroid'
+                  mode='date'
+                />
+              </Dialog.Content>
+              <Dialog.Actions>
+                <Button color='#5c80ac' onPress={hideFrom}>Cancel</Button>
+                <Button color='#5c80ac' onPress={() => onFromDatePress()}>Confirm</Button>
+              </Dialog.Actions>
+            </Dialog>
+
+            <Dialog visible={visibleTo}
+                    dismissable={false}
+                    style={{backgroundColor: '#cccccc'}}>
+              <Dialog.Title style={{color: '#5c80ac'}}>Choose to</Dialog.Title>
+              <Dialog.Content>
+                <DatePicker
+                  date={toDate}
+                  onDateChange={setToDate}
+                  androidVariant='nativeAndroid'
+                  mode='date'
+                />
+              </Dialog.Content>
+              <Dialog.Actions>
+                <Button color='#5c80ac' onPress={hideTo}>Cancel</Button>
+                <Button color='#5c80ac' onPress={() => onToDatePress()}>Confirm</Button>
+              </Dialog.Actions>
+            </Dialog>
+
             <Dialog visible={visibleSort}
                   dismissable={false}
                   style={{backgroundColor: '#cccccc'}}>
