@@ -4,7 +4,50 @@ import { FlatList, Image, Pressable, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Paragraph, Subheading } from "react-native-paper";
 import { getCountriesAndCitiesWithPhotosAscending, getCountriesAndCitiesWithPhotosDescending, getOrderByDateTimeAscending, getOrderByDateTimeDescending } from "../helpers/searchFilter";
-import { PhotoState } from "../interfaces/photo";
+import { Photo, PhotoState } from "../interfaces/photo";
+
+const ImageListByLocation: FC<{photos: {country: string; cities: {city: string; photos: Photo[]}[]}[]}> = (props): ReactElement => {
+    const navigation = useNavigation();
+
+    const onFullImage = (propPhoto: string) => {
+        navigation.navigate('Full image', {id: propPhoto});
+    }
+
+    return (
+        <>
+        {
+        props.photos.map((x) => {
+            return (
+                <View>
+                    <Subheading style={{color: '#5c80ac', fontSize: 20}}>{x.country}</Subheading>
+                    {
+                        x.cities.map((y) => {
+                            return (
+                                <>
+                                    <Paragraph style={{color: '#5c80ac'}}>{y.city}</Paragraph>
+                                    <FlatList
+                                        numColumns={4}
+                                        data={y.photos}
+                                        keyExtractor={item => item.id}
+                                        renderItem={({item})=>{
+                                            return (
+                                            <Pressable onPress={() => onFullImage(item.id)}>
+                                                <Image source={{uri: item.imageUri}}
+                                                        style={{ height: 80, width: 80, marginHorizontal: '0.5%', marginVertical: '2%' }}/>
+                                            </Pressable>
+                                            )
+                                        }}
+                                    />
+                                </>
+                            )
+                        })
+                    }
+                </View>
+            )})
+        }
+        </>
+    );
+}
 
 export const ImageList: FC<{photoState: PhotoState, sortingValue: string, sortingOrder: string}> = (props): ReactElement => { 
     const navigation = useNavigation();
@@ -35,35 +78,7 @@ export const ImageList: FC<{photoState: PhotoState, sortingValue: string, sortin
                 props.sortingValue === 'location' && props.sortingOrder === 'ascending' &&
                 <ScrollView>
                 {
-                    getCountriesAndCitiesWithPhotosAscending(props.photoState).map((x) => {
-                        return (
-                            <View>
-                                <Subheading style={{color: '#5c80ac', fontSize: 20}}>{x.country}</Subheading>
-                                {
-                                    x.cities.map((y) => {
-                                        return (
-                                            <>
-                                                <Paragraph style={{color: '#5c80ac'}}>{y.city}</Paragraph>
-                                                <FlatList
-                                                    numColumns={4}
-                                                    data={y.photos}
-                                                    keyExtractor={item => item.id}
-                                                    renderItem={({item})=>{
-                                                        return (
-                                                        <Pressable onPress={() => onFullImage(item.id)}>
-                                                            <Image source={{uri: item.imageUri}}
-                                                                    style={{ height: 80, width: 80, marginHorizontal: '0.5%', marginVertical: '2%' }}/>
-                                                        </Pressable>
-                                                        )
-                                                    }}
-                                                />
-                                            </>
-                                        )
-                                    })
-                                }
-                            </View>
-                        )
-                    })
+                    <ImageListByLocation photos={getCountriesAndCitiesWithPhotosAscending(props.photoState)} />
                 }
                 </ScrollView>
             }
@@ -71,35 +86,7 @@ export const ImageList: FC<{photoState: PhotoState, sortingValue: string, sortin
                 props.sortingValue === 'location' && props.sortingOrder === 'descending' &&
                 <ScrollView>
                 {
-                    getCountriesAndCitiesWithPhotosDescending(props.photoState).map((x) => {
-                        return (
-                            <View>
-                                <Subheading style={{color: '#5c80ac', fontSize: 20}}>{x.country}</Subheading>
-                                {
-                                    x.cities.map((y) => {
-                                        return (
-                                            <>
-                                                <Paragraph style={{color: '#5c80ac'}}>{y.city}</Paragraph>
-                                                <FlatList
-                                                    numColumns={4}
-                                                    data={y.photos}
-                                                    keyExtractor={item => item.id}
-                                                    renderItem={({item})=>{
-                                                        return (
-                                                        <Pressable onPress={() => onFullImage(item.id)}>
-                                                            <Image source={{uri: item.imageUri}}
-                                                                    style={{ height: 80, width: 80, marginHorizontal: '0.5%', marginVertical: '2%' }}/>
-                                                        </Pressable>
-                                                        )
-                                                    }}
-                                                />
-                                            </>
-                                        )
-                                    })
-                                }
-                            </View>
-                        )
-                    })
+                    <ImageListByLocation photos={getCountriesAndCitiesWithPhotosDescending(props.photoState)} />
                 }
                 </ScrollView>
             }

@@ -56,9 +56,6 @@ const GalleryScreen = () => {
   const filteredPhotoState: PhotoState =  { photos: galleryFilter(photoState, filterState)};
 
   const [tempFilterState, setTempFilterState] = React.useState({...filterState.searchTerm});
-  useEffect(() => {
-    setTempFilterState({...filterState.searchTerm});
-  }, [filterState]);
 
   const [citiesCheckedState, setCitiesCheckedState] = React.useState(getCountriesAndCities(photoState));
   useEffect(() => {
