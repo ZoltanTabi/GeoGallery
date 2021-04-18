@@ -158,57 +158,61 @@ const FullImageScreen = (): ReactElement => {
 						dismissable={false}
 						style={{backgroundColor: '#cccccc'}}>
 						<Dialog.Title style={{color: '#5c80ac'}}>Modify labels</Dialog.Title>
-						<Dialog.Content style={{backgroundColor: '#5c80ac'}}>							
-							<Subheading style={{padding: 5}}>Labels of the photo:</Subheading>
-							<View style={{
-									flexDirection: 'row', 
-									flexWrap: 'wrap', 
-									justifyContent: 'center', 
-									}}>
-								{
-								actLabels.map((item) => {
-								return (
-									<Chip
-										children={item.text}
-										mode="outlined" 
-										textStyle={{ color:'white',fontSize: 15 }}
-										style={{ margin: 4, backgroundColor: item.color }}
-										key={item.id}
-										onClose={() => dispatch(commonRemoveLabelFromPhoto(photoObject.id, item.id))}
-										onPress={() => {}}
-										onLongPress={() => onLabelEditing(item.id)}
-										/>
-									);
-								})}							
-      						</View>					
-							<Subheading style={{padding: 5}}>Other labels:</Subheading>
-							<View style={{
-									flexDirection: 'row', 
-									flexWrap: 'wrap', 
-									justifyContent: 'center', 
-									}}>
-								{
-								otherLabels.map((item) => {
-								return (
-									<Chip
-										children={item.text}
-										mode="outlined" 
-										textStyle={{ color:'white',fontSize: 15 }}
-										style={{ margin: 4, backgroundColor: item.color }}
-										key={item.id}
-										onPress={() => dispatch(commonAddLabelToPhoto(photoObject.id, item.id))}
-										onLongPress={() => onLabelEditing(item.id)}
-										/>
-									);
-								})}		
-								<IconButton
-									icon="plus"
-									color='#cccccc'
-									size={20}
-									onPress={() => onLabelEditing()}
-								/>					
-      						</View>
-						</Dialog.Content>
+						<Dialog.ScrollArea style={{backgroundColor: '#5c80ac', height: '40%'}}>	
+							<ScrollView>
+								<View style={{maxHeight: '30%'}}>
+								<Subheading style={{padding: 5}}>Labels of the photo:</Subheading>
+								<View style={{
+										flexDirection: 'row', 
+										flexWrap: 'wrap', 
+										justifyContent: 'center', 
+										}}>
+									{
+									actLabels.map((item) => {
+									return (
+										<Chip
+											children={item.text}
+											mode="outlined" 
+											textStyle={{ color:'white',fontSize: 15 }}
+											style={{ margin: 4, backgroundColor: item.color }}
+											key={item.id}
+											onClose={() => dispatch(commonRemoveLabelFromPhoto(photoObject.id, item.id))}
+											onPress={() => {}}
+											onLongPress={() => onLabelEditing(item.id)}
+											/>
+										);
+									})}							
+								</View>					
+								<Subheading style={{padding: 5}}>Other labels:</Subheading>
+								<View style={{
+										flexDirection: 'row', 
+										flexWrap: 'wrap', 
+										justifyContent: 'center', 
+										}}>
+									{
+									otherLabels.map((item) => {
+									return (
+										<Chip
+											children={item.text}
+											mode="outlined" 
+											textStyle={{ color:'white',fontSize: 15 }}
+											style={{ margin: 4, backgroundColor: item.color }}
+											key={item.id}
+											onPress={() => dispatch(commonAddLabelToPhoto(photoObject.id, item.id))}
+											onLongPress={() => onLabelEditing(item.id)}
+											/>
+										);
+									})}		
+									<IconButton
+										icon="plus"
+										color='#cccccc'
+										size={20}
+										onPress={() => onLabelEditing()}
+									/>					
+								</View>
+								</View>
+							</ScrollView>						
+						</Dialog.ScrollArea>
 						<Dialog.Actions>
 							<Button color='#5c80ac' onPress={hideLabel}>Confirm</Button>
 						</Dialog.Actions>
