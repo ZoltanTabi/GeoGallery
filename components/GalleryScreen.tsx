@@ -18,6 +18,7 @@ import ImageCropPicker from 'react-native-image-crop-picker';
 
 import { Button, Chip, Portal, FAB, Provider, Dialog, Paragraph, List, Surface, Subheading, Divider, RadioButton } from 'react-native-paper';
 import { color } from 'react-native-reanimated';
+import CheckBox from '@react-native-community/checkbox';
 
 import {
   Header,
@@ -80,6 +81,7 @@ const GalleryScreen = () => {
   const [sortingOrder, setSortingOrder] = React.useState('ascending');
   const [fromDate, setFromDate] = useState(new Date())
   const [toDate, setToDate] = useState(new Date())
+  const [isSelected, setSelection] = useState(false);
 
   const onLabelPress = (label : Label) => {
     const index = tempFilterState.labels.indexOf(label.id);
@@ -258,6 +260,12 @@ const GalleryScreen = () => {
                       justifyContent: 'center',
                       elevation: 4}}>                        
                     <Subheading style={{padding: 5}}>Location</Subheading>
+                    <View>
+                    <CheckBox
+                        value={isSelected}
+                        onValueChange={setSelection}
+                      />
+                    </View>                    
                 </Surface>
                 <Surface style={{
                       backgroundColor: '#5c80ac',
