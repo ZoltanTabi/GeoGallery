@@ -16,9 +16,8 @@ import {
 } from 'react-native';
 import ImageCropPicker from 'react-native-image-crop-picker';
 
-import { Button, Chip, Portal, FAB, Provider, Dialog, Paragraph, List, Surface, Subheading, Divider, RadioButton } from 'react-native-paper';
-import { color } from 'react-native-reanimated';
-import CheckBox from '@react-native-community/checkbox';
+import { Button, Chip, Portal, FAB, Provider, Dialog, Paragraph, List, Surface, Subheading, Divider, RadioButton, Checkbox, Title, IconButton } from 'react-native-paper';
+import { color, set } from 'react-native-reanimated';
 
 import {
   Header,
@@ -80,6 +79,12 @@ const GalleryScreen = () => {
     setCitiesCheckedState([...citiesCheckedState]);
   }, [photoState]);
 
+  const checkChanged = (cityName: string, countryName : string) => {
+    let city = citiesCheckedState.find(x => x.country === countryName)?.cities.find(y => y.name === cityName) as {name: string, checked: boolean};
+    if (city) city.checked = !city.checked;
+    setCitiesCheckedState([...citiesCheckedState]);
+  }
+
   const [state, setState] = React.useState( false );
   const onStateChange = (open: boolean) => setState( open );
   const open = state;
@@ -100,11 +105,25 @@ const GalleryScreen = () => {
 	const showTo = () => setVisibleTo(true);	
 	const hideTo = () => setVisibleTo(false);
 
+  const [visibleCheck, setVisibleCheck] = React.useState(false);
+	const showCheck = () => setVisibleCheck(true);	
+	const hideCheck = () => setVisibleCheck(false);
+
   const [sortingValue, setSortingValue] = React.useState('none');
   const [sortingOrder, setSortingOrder] = React.useState('ascending');
   const [fromDate, setFromDate] = useState(new Date())
   const [toDate, setToDate] = useState(new Date())
-  const [isSelected, setSelection] = useState(false);
+
+  const onLocationPress = () => {
+    const tempCities: string[] = []
+    citiesCheckedState.forEach(element => {
+      element.cities.forEach(city => {
+        if(city.checked) tempCities.push(city.name);
+      });
+    });
+    tempFilterState.cities = tempCities;
+    hideCheck();
+  }
 
   const onLabelPress = (label : Label) => {
     const index = tempFilterState.labels.indexOf(label.id);
@@ -129,6 +148,56 @@ const GalleryScreen = () => {
     tempFilterState.dateTo = toDate;
     setTempFilterState({...tempFilterState});
     hideTo();
+  }
+
+  const onMapSelectionPress = () => {
+    filterState.searchTerm.circle = undefined; 
+    filterState.searchTerm.polygon = undefined;
+    filterState.searchTerm.photoIdsByClusterFilter = undefined;
+    dispatch(updateSearchTerm(filterState.searchTerm));
+  }
+
+  const onConfirmPress = () => {
+    filterState.searchTerm.cities = tempFilterState.cities;
+    filterState.searchTerm.countries = tempFilterState.countries;
+    filterState.searchTerm.dateTo = tempFilterState.dateTo;
+    filterState.searchTerm.dateFrom = tempFilterState.dateFrom;
+    filterState.searchTerm.labels = tempFilterState.labels;
+    hideFilter();
+  }
+
+  const onDeletePress = () => {
+    tempFilterState.cities = [];
+    tempFilterState.countries = [];
+    tempFilterState.dateTo = undefined;
+    tempFilterState.dateFrom = undefined;
+    tempFilterState.labels = [];
+    setTempFilterState({...tempFilterState});
+
+    citiesCheckedState.forEach(country => {
+      country.cities.forEach(city => {
+        city.checked = false;
+      });
+    });
+    setCitiesCheckedState([...citiesCheckedState]);
+  }
+
+  const onCancelPress = () => {
+    tempFilterState.cities = filterState.searchTerm.cities;
+    tempFilterState.countries = filterState.searchTerm.countries;
+    tempFilterState.dateTo = filterState.searchTerm.dateTo;
+    tempFilterState.dateFrom = filterState.searchTerm.dateFrom;
+    tempFilterState.labels = filterState.searchTerm.labels;
+    setTempFilterState({...tempFilterState});
+
+    citiesCheckedState.forEach(country => {
+      country.cities.forEach(city => {
+        if (filterState.searchTerm.cities.includes(city.name)) city.checked = true;
+        else city.checked = false;
+      });
+    });
+    setCitiesCheckedState([...citiesCheckedState]);
+    hideFilter()
   }
 
   const addPhotoByCamera = async () => {
@@ -177,38 +246,6 @@ const GalleryScreen = () => {
 
   return (
     <View style={{flex: 1}}>
-      {/*<View style={{
-            marginTop: 10,
-            padding: '2%',
-            flexDirection: 'row', 
-            flexWrap: 'wrap',
-            alignItems: 'center', 
-            justifyContent: 'center', 
-            }}>
-      {
-        labelState.labels.map((item) => {
-          return (
-              <Chip
-                children={item.text}
-                mode="outlined" 
-                textStyle={{ color:'white',fontSize: 15 }}
-                style={{ margin: 4, backgroundColor: item.color }}
-                key={item.id}
-                onPress={() => {}}
-                onLongPress={() => onLabelEditing(item.id)}
-                />
-          );
-        })}
-      </View>
-      <View style={{flex: 1, marginHorizontal: '5%'}}>
-        <Button style={{margin: '10%'}}
-                icon='plus' mode='contained' 
-                color='#5c80ac' 
-                labelStyle={{ color: '#cccccc'}} 
-                onPress={() => onLabelEditing()}>
-          New label
-        </Button>
-      </View> */}
       <View style={{flex: 1, 
                     flexDirection: 'row', 
                     alignItems: 'center', 
@@ -271,6 +308,10 @@ const GalleryScreen = () => {
               onStateChange={(state) => onStateChange(state.open)}
               onPress={() => {if (open) {}}}
             />
+          </Portal>
+        </Provider>
+        <Provider>
+          <Portal>
             <Dialog visible={visibleFilter}
                   dismissable={false}
                   style={{backgroundColor: '#cccccc'}}>
@@ -284,12 +325,13 @@ const GalleryScreen = () => {
                       justifyContent: 'center',
                       elevation: 4}}>                        
                     <Subheading style={{padding: 5}}>Location</Subheading>
-                    <View>
-                    <CheckBox
-                        value={isSelected}
-                        onValueChange={setSelection}
-                      />
-                    </View>                    
+                    <Pressable 
+                        style={{borderColor: '#cccccc', borderWidth: 0.2,  minHeight: '10%', justifyContent: 'center'}} 
+                        onPress={showCheck}>
+                      <Subheading style={{margin: '5%'}}>
+                        {tempFilterState.cities.join(', ')}
+                      </Subheading>
+                    </Pressable>
                 </Surface>
                 <Surface style={{
                       backgroundColor: '#5c80ac',
@@ -338,10 +380,25 @@ const GalleryScreen = () => {
                       })}
                     </View>
                 </Surface>
+                { (filterState.searchTerm.circle !== undefined || 
+                  filterState.searchTerm.polygon !== undefined ||
+                  filterState.searchTerm.photoIdsByClusterFilter !== undefined) &&
+                  <Surface style={{
+                    backgroundColor: '#5c80ac',
+                    padding: 8,            
+                    flexDirection: 'row',          
+                    marginVertical: '3%',
+                    //alignItems: 'center',
+                    //justifyContent: 'center',
+                    elevation: 4}}>
+                    <Button mode='outlined' icon='close' color='#ffffff' onPress={() => {onMapSelectionPress()}}>Selection from map</Button>
+                  </Surface>
+                }
               </Dialog.Content>
               <Dialog.Actions>
-                <Button color='#5c80ac' onPress={hideFilter}>Cancel</Button>
-                <Button color='#5c80ac' onPress={() => {}}>Confirm</Button>
+                <Button color='#ac5c5c' onPress={() => onDeletePress()}>Delete filters</Button>
+                <Button color='#5c80ac' onPress={() => onCancelPress()}>Cancel</Button>
+                <Button color='#5c80ac' onPress={() => onConfirmPress()}>Confirm</Button>
               </Dialog.Actions>
 					  </Dialog>
 
@@ -378,6 +435,37 @@ const GalleryScreen = () => {
               <Dialog.Actions>
                 <Button color='#5c80ac' onPress={hideTo}>Cancel</Button>
                 <Button color='#5c80ac' onPress={() => onToDatePress()}>Confirm</Button>
+              </Dialog.Actions>
+            </Dialog>
+
+            <Dialog visible={visibleCheck}
+                    dismissable={false}
+                    style={{backgroundColor: '#cccccc'}}>
+              <Dialog.Title style={{color: '#5c80ac'}}>Choose cities</Dialog.Title>
+              <Dialog.Content style={{backgroundColor: '#5c80ac'}}>
+                {citiesCheckedState.map((item) => {                    
+                  return (
+                    <View key={item.country}>
+                    <Title>{item.country}</Title>
+                    {item.cities.map((city) =>{
+                      return (
+                        <View key={city.name}>
+                          <Checkbox.Item 
+                            label={city.name} 
+                            status={city.checked ? 'checked' : 'unchecked'} 
+                            onPress={() => checkChanged(city.name, item.country)}
+                            color='#ffffff'
+                            uncheckedColor='#ffffff'
+                          />
+                        </View>
+                      )                         
+                  })}
+                  </View>);
+                })}       
+              </Dialog.Content>
+              <Dialog.Actions>
+                <Button color='#5c80ac' onPress={hideCheck}>Cancel</Button>
+                <Button color='#5c80ac' onPress={() => onLocationPress()}>Confirm</Button>
               </Dialog.Actions>
             </Dialog>
 
