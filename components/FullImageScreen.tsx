@@ -1,5 +1,5 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/core';
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import { View, Text, Image, useWindowDimensions } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import ImageZoom from 'react-native-image-pan-zoom';
@@ -22,13 +22,20 @@ const FullImageScreen = (): ReactElement => {
 	const photoState = useSelector((state: RootState) => state.photoState);
 	const labelState = useSelector((state: RootState) => state.labelState);
 
-	const photoObject = photoState.photos.find((photo) => photo.id == route.params.id)as Photo;
+	const [photoObject, setPhotoObject] = useState(photoState.photos.find((photo) => photo.id == route.params.id) as Photo);
 
 	const actLabels = labelState.labels.filter(label => photoObject.labels.includes(label.id));
 	const otherLabels = labelState.labels.filter(label => !(photoObject.labels.includes(label.id)));
-	const photoDate = photoObject.createDate ? photoObject.createDate.toDateString() : "No date information";	
+	const photoDate = /*photoObject.createDate ? photoObject.createDate.toDateString() :*/ "No date information";	
 	const photoCountry = photoObject.country ?? "No country information";
 	const photoCity = photoObject.city ?? "No city information";
+
+	useEffect(() => {
+		const photo = photoState.photos.find((photo) => photo.id == route.params.id);
+		if (photo) {
+			setPhotoObject(photo as Photo);
+		}
+	  }, [photoState, labelState]);
 
 	const onLabelEditing = (propLabel?: string) => {
 		const checkId = propLabel ? propLabel : "";
