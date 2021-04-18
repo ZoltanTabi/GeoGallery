@@ -9,6 +9,7 @@ import { DrawingMode } from '../enums/drawingMode';
 import { Screen } from '../enums/screen';
 import { distanceByLatLng, getDistance } from '../helpers/drawing';
 import { devConsoleLog, onlyUnique } from '../helpers/functions';
+import { mapFilter } from '../helpers/searchFilter';
 import { RootState } from '../storage';
 import { updateSearchTerm } from '../storage/actions/searchTermAction';
 
@@ -17,6 +18,8 @@ const MapScreen = (): ReactElement => {
   const navigation = useNavigation();
   const photoState = useSelector((state: RootState) => state.photoState);
   const searchTermState = useSelector((state: RootState) => state.searchTermState);
+
+  const photos = mapFilter(photoState, searchTermState);
 
   const [region, setRegion] = useState<Region>( {latitude: 47.497913, longitude: 19.040236, latitudeDelta: 2, longitudeDelta: 2 });
   const [fabProps, setFabProps] = useState<{open: boolean, visible: boolean}>({open: false, visible: true});
@@ -53,7 +56,7 @@ const MapScreen = (): ReactElement => {
     let photoIds: string[] = [];
     markers?.forEach(marker => {
       const coordinates = (marker as any).properties.coordinate;
-      photoIds =  [...photoIds, ...photoState.photos.filter(x => x.latitude === coordinates.latitude && x.longitude === coordinates.longitude).map(x => x.id)];
+      photoIds =  [...photoIds, ...photos.filter(x => x.latitude === coordinates.latitude && x.longitude === coordinates.longitude).map(x => x.id)];
     })
     photoIds = photoIds.filter(onlyUnique);
 
@@ -138,6 +141,7 @@ const MapScreen = (): ReactElement => {
     if (drawingMode.enabled) {
       switch(drawingMode.type) {
         case DrawingMode.None:
+          setDrawingMode(x => ({ ...x, enabled: false }));
           break;
         case DrawingMode.Circle:
           {
@@ -160,6 +164,7 @@ const MapScreen = (): ReactElement => {
           }
           break;
         default:
+          setDrawingMode(x => ({ ...x, enabled: false }));
           break;
       }
     }
@@ -188,8 +193,12 @@ const MapScreen = (): ReactElement => {
   const onFabPress = () => {
     if (drawingMode.enabled || circle || rectangle) {
       if (circle) {
+        searchTermState.searchTerm.circle = undefined;
+        dispatch(updateSearchTerm(searchTermState.searchTerm));
         setCircle(undefined);
       } else if (rectangle) {
+        searchTermState.searchTerm.polygon = undefined;
+        dispatch(updateSearchTerm(searchTermState.searchTerm));
         setRectangle(undefined);
       }
       setDrawingMode({ type: DrawingMode.None, enabled: false });
@@ -221,7 +230,7 @@ const MapScreen = (): ReactElement => {
         onTouchEnd={onMapTouchEnd}
       >
         {
-          photoState.photos.filter(x => x.latitude && x.longitude).map((item) => {
+          photos.filter(x => x.latitude && x.longitude).map((item) => {
             return (
               <Marker
                 key={item.id}
