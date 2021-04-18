@@ -4,23 +4,25 @@ import { Image, PermissionsAndroid, StyleSheet, View } from 'react-native';
 import MapView from "react-native-map-clustering";
 import { Region, PROVIDER_GOOGLE, Marker, LatLng, MapEvent, Circle, MapCircleProps, Polygon, MapPolygonProps, MapTypes, Heatmap, WeightedLatLng } from 'react-native-maps';
 import { Button, Dialog, FAB, Paragraph, Portal, Provider, RadioButton, Subheading } from 'react-native-paper';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { ClusterType } from '../enums/clusterType';
+import { DrawingMode } from '../enums/drawingMode';
 import { MapStyle } from '../enums/mapStyle';
+import { Screen } from '../enums/screen';
 import { distanceByLatLng, getDistance } from '../helpers/drawing';
 import { devConsoleLog, onlyUnique } from '../helpers/functions';
+import { mapFilter } from '../helpers/searchFilter';
 import { RootState } from '../storage';
+import { updateSearchTerm } from '../storage/actions/searchTermAction';
 const nightMapStyle = require('../assets/nightMapStyle.json');
 
-enum DrawingMode {
-  None,
-  Circle,
-  Rectangle
-}
-
 const MapScreen = (): ReactElement => {
+	const dispatch = useDispatch();
   const navigation = useNavigation();
   const photoState = useSelector((state: RootState) => state.photoState);
+  const searchTermState = useSelector((state: RootState) => state.searchTermState);
+
+  const photos = mapFilter(photoState, searchTermState);
 
   const mapStyles: {code: MapStyle; label: string;}[] = [{code: MapStyle.standard, label: 'Deafult'}, {code: MapStyle.hybrid, label: 'Satellite'}, {code: MapStyle.terrain, label: 'Terrain'}, {code: MapStyle.night, label: 'Night'}];
   const clusterTypes: {code: ClusterType; label: string;}[] = [{code: ClusterType.cluster, label: 'Clustering'}, {code: ClusterType.heatMap, label: 'Heat Map'}];
@@ -65,16 +67,20 @@ const MapScreen = (): ReactElement => {
   }
 
   const onMarkerPress = (markerId: string) => {
-    navigation.navigate('Full image', {id: markerId});
+    navigation.navigate(Screen.FullImage, {id: markerId});
   }
 
   const onClusterPress = (_cluster: Marker, markers?: Marker[]) => {
     let photoIds: string[] = [];
     markers?.forEach(marker => {
       const coordinates = (marker as any).properties.coordinate;
-      photoIds =  [...photoIds, ...photoState.photos.filter(x => x.latitude === coordinates.latitude && x.longitude === coordinates.longitude).map(x => x.id)];
+      photoIds =  [...photoIds, ...photos.filter(x => x.latitude === coordinates.latitude && x.longitude === coordinates.longitude).map(x => x.id)];
     })
     photoIds = photoIds.filter(onlyUnique);
+
+    searchTermState.searchTerm.photoIdsByClusterFilter = photoIds;
+    dispatch(updateSearchTerm(searchTermState.searchTerm));
+    navigation.navigate(Screen.GalleryScreen);
   }
 
   const onPanDrag = (event: MapEvent) => {
@@ -151,43 +157,34 @@ const MapScreen = (): ReactElement => {
 
   const onMapTouchEnd = () => {
     if (drawingMode.enabled) {
-      let photoIds: string[] = []; 
-
       switch(drawingMode.type) {
         case DrawingMode.None:
+          setDrawingMode(x => ({ ...x, enabled: false }));
           break;
         case DrawingMode.Circle:
           {
-            photoIds = photoState.photos.filter(x => x.latitude && x.longitude && circle &&
-                getDistance(x.latitude, x.longitude, circle.center.latitude, circle.center.longitude) < circle.radius
-              ).map(x => x.id);
+            setDrawingMode(x => ({ ...x, enabled: false }));
+
+            searchTermState.searchTerm.circle = circle;
+            dispatch(updateSearchTerm(searchTermState.searchTerm));
+
+            navigation.navigate(Screen.GalleryScreen);
           }
           break;
         case DrawingMode.Rectangle:
           {
-            const firstCoordinate: LatLng = (rectangle?.coordinates[0]) as LatLng;
-            const thirdCoordinate: LatLng = (rectangle?.coordinates[2]) as LatLng;
+            setDrawingMode(x => ({ ...x, enabled: false }));
 
-            photoIds = photoState.photos.filter(x => x.latitude && x.longitude && rectangle && (
-                (firstCoordinate.latitude < thirdCoordinate.latitude && firstCoordinate.latitude <= x.latitude && x.latitude <= thirdCoordinate.latitude)
-                ||
-                (firstCoordinate.latitude > thirdCoordinate.latitude && firstCoordinate.latitude >= x.latitude && x.latitude >= thirdCoordinate.latitude)
-              ) && (
-                (firstCoordinate.longitude < thirdCoordinate.longitude && firstCoordinate.longitude <= x.longitude && x.longitude <= thirdCoordinate.longitude)
-                ||
-                (firstCoordinate.longitude > thirdCoordinate.longitude && firstCoordinate.longitude >= x.longitude && x.longitude >= thirdCoordinate.longitude)
-              )
-            ).map(x => x.id);
+            searchTermState.searchTerm.polygon = rectangle?.coordinates;
+            dispatch(updateSearchTerm(searchTermState.searchTerm));
+
+            navigation.navigate(Screen.GalleryScreen);
           }
           break;
         default:
+          setDrawingMode(x => ({ ...x, enabled: false }));
           break;
       }
-
-      // TODO navigate to gallery screen and filter photoIds
-      devConsoleLog('Selected photo count: ' + photoIds.length);
-      devConsoleLog('Selected photos: ' + photoIds);
-      setDrawingMode(x => ({ ...x, enabled: false }));
     }
   }
 
@@ -214,8 +211,12 @@ const MapScreen = (): ReactElement => {
   const onFabPress = () => {
     if (drawingMode.enabled || circle || rectangle) {
       if (circle) {
+        searchTermState.searchTerm.circle = undefined;
+        dispatch(updateSearchTerm(searchTermState.searchTerm));
         setCircle(undefined);
       } else if (rectangle) {
+        searchTermState.searchTerm.polygon = undefined;
+        dispatch(updateSearchTerm(searchTermState.searchTerm));
         setRectangle(undefined);
       }
       setDrawingMode({ type: DrawingMode.None, enabled: false });
@@ -252,7 +253,7 @@ const MapScreen = (): ReactElement => {
       >
         {
           clusterType === ClusterType.cluster &&
-          photoState.photos.filter(x => x.latitude && x.longitude).map((item) => {
+          photos.filter(x => x.latitude && x.longitude).map((item) => {
             return (
               <Marker
                 key={item.id}

@@ -21,10 +21,12 @@
     "@timwangdev/react-native-geocoder": "^1.0.0-alpha.5",
     "guid-typescript": "^1.0.9",
     "patch-package": "^6.4.7",
+    "point-in-polygon": "^1.1.0",
     "react": "16.13.1",
     "react-native": "0.63.4",
     "react-native-android-location-enabler": "^1.2.2",
     "react-native-color-picker": "^0.6.0",
+    "react-native-date-picker": "^3.2.10",
     "react-native-fs": "^2.16.6",
     "react-native-gesture-handler": "^1.10.3",
     "react-native-image-crop-picker": "^0.36.0",
@@ -40,7 +42,8 @@
     "react-native-vector-icons": "^8.1.0",
     "react-redux": "^7.2.2",
     "redux": "^4.0.5",
-    "redux-thunk": "^2.3.0"
+    "redux-thunk": "^2.3.0",
+    "rn-checkbox-list": "^0.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",
