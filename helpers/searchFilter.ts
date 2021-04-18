@@ -53,6 +53,14 @@ export function getCountriesAndCitiesWithPhotosDescending(photoState: PhotoState
     return getCountriesAndCitiesWithPhotos(photoState).reverse();
 }
 
+export function getOrderByDateTimeAscending(photoState: PhotoState): {date: Date; photos: Photo[]}[] {
+    return getOrderByDateTime(photoState).reverse();
+}
+
+export function getOrderByDateTimeDescending(photoState: PhotoState): {date: Date; photos: Photo[]}[] {
+    return getOrderByDateTime(photoState);
+}
+
 function latLngToNumberArray(latLng: LatLng): number[] {
     return  [latLng.latitude, latLng.longitude];
 }
@@ -117,6 +125,28 @@ function compareCity( a: {city: string; photos: Photo[]}, b: {city: string; phot
       return -1;
     }
     if (a.city > b.city){
+      return 1;
+    }
+    return 0;
+}
+
+function getOrderByDateTime(photoState: PhotoState): {date: Date; photos: Photo[]}[] {
+    const photosByDate: {date: Date; photos: Photo[]}[] =[];
+
+    const gByDate = groupBy(photoState.photos.filter(x => x.createDate), 'createDate');
+
+    for(var date in gByDate) {
+        photosByDate.push({date: new Date(date), photos: gByDate[date]})
+    }
+
+    return photosByDate.sort(compareDate);
+}
+
+function compareDate( a: {date: Date; photos: Photo[]}, b: {date: Date; photos: Photo[]} ) {
+    if (a.date < b.date){
+      return -1;
+    }
+    if (a.date > b.date){
       return 1;
     }
     return 0;

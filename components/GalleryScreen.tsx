@@ -31,14 +31,15 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { devConsoleLog, getNewId, imageToPhoto } from '../helpers/functions';
 import { Label } from '../interfaces/label';
-import { ImageType, PhotoForAdd } from '../interfaces/photo';
+import { ImageType, PhotoForAdd, PhotoState } from '../interfaces/photo';
 import { RootState } from '../storage';
 import { addMultiplePhoto, addPhoto } from '../storage/actions/photoAction';
 import Geolocation from '@react-native-community/geolocation';
 import RNAndroidLocationEnabler from 'react-native-android-location-enabler';
 import { updateSearchTerm } from '../storage/actions/searchTermAction';
 import DatePicker from 'react-native-date-picker'
-import { getCountriesAndCities } from '../helpers/searchFilter';
+import { galleryFilter, getCountriesAndCities } from '../helpers/searchFilter';
+import { ImageList } from './ImageList';
 
 const GalleryScreen = () => {
 
@@ -52,6 +53,8 @@ const GalleryScreen = () => {
   const labelState = useSelector((state: RootState) => state.labelState);
   const photoState = useSelector((state: RootState) => state.photoState);
   const filterState = useSelector((state: RootState) => state.searchTermState);
+
+  const filteredPhotoState: PhotoState =  { photos: galleryFilter(photoState, filterState)};
 
   const [tempFilterState, setTempFilterState] = React.useState({...filterState.searchTerm});
   useEffect(() => {
@@ -97,7 +100,7 @@ const GalleryScreen = () => {
 	const showTo = () => setVisibleTo(true);	
 	const hideTo = () => setVisibleTo(false);
 
-  const [sortingValue, setSortingValue] = React.useState('location');
+  const [sortingValue, setSortingValue] = React.useState('none');
   const [sortingOrder, setSortingOrder] = React.useState('ascending');
   const [fromDate, setFromDate] = useState(new Date())
   const [toDate, setToDate] = useState(new Date())
@@ -227,7 +230,8 @@ const GalleryScreen = () => {
       </View>
       <View style={{ flex : 10,
                     alignItems: 'center' }}>
-        <FlatList
+        <ImageList photoState={filteredPhotoState} sortingValue={sortingValue} sortingOrder={sortingOrder} />
+        {/*<FlatList
           numColumns={4}
           data={photoState.photos}
           keyExtractor={item => item.id}
@@ -239,7 +243,7 @@ const GalleryScreen = () => {
               </Pressable>
             )
           }}
-        />
+        />*/}
         <Provider>
           <Portal>
             <FAB.Group 
