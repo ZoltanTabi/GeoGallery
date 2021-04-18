@@ -2,25 +2,18 @@ import { Photo, PhotoState } from '../interfaces/photo';
 import { SearchTerm, SearchTermState } from '../interfaces/searchTerm';
 import { MapCircleProps, LatLng } from 'react-native-maps';
 import { getDistance } from './drawing';
-import { onlyUnique } from './functions';
+import { groupBy, onlyUnique } from './functions';
 var pointInPolygon = require('point-in-polygon');
 
-export function getCountries(photoState: PhotoState): string[] {
-    return photoState.photos.map(x => x.country).filter(x => x).filter(onlyUnique);
-}
-
-export function getCities(photoState: PhotoState): string[] {
-    return photoState.photos.map(x => x.city).filter(x => x).filter(onlyUnique);
-}
 
 export function galleryFilter(photoState: PhotoState, searchTermState: SearchTermState): Photo[] {
     let photos = [...photoState.photos];
     const searchTerm = searchTermState.searchTerm;
 
-    if (searchTerm.countries) {
+    if (searchTerm.countries.length > 0) {
         photos = photos.filter(x => x.country && searchTerm.countries?.includes(x.country));
     }
-    if (searchTerm.cities) {
+    if (searchTerm.cities.length > 0) {
         photos = photos.filter(x => x.city && searchTerm.cities?.includes(x.city));
     }
     if (searchTerm.photoIdsByClusterFilter) {
@@ -37,7 +30,28 @@ export function galleryFilter(photoState: PhotoState, searchTermState: SearchTer
 }
 
 export function mapFilter(photoState: PhotoState, searchTermState: SearchTermState): Photo[] {
-    return filterByDateAndlabels([...photoState.photos], searchTermState.searchTerm);
+    return filterByDateAndlabels(photoState.photos.filter(x => x.latitude && x.longitude), searchTermState.searchTerm);
+}
+
+export function getCountriesAndCities(photoState: PhotoState): {country: string; cities: {id: string; name: string}[]}[] {
+    const countriesAndCities: {country: string; cities: {id: string; name: string}[]}[] = [];
+    
+    getCountriesAndCitiesWithPhotosAscending(photoState).map(x => {
+        const cities: {id: string; name: string}[] = [];
+        x.cities.forEach(city => cities.push({id: city.city, name: city.city}));
+
+        countriesAndCities.push({country: x.country, cities: cities});
+    });
+
+    return countriesAndCities;
+}
+
+export function getCountriesAndCitiesWithPhotosAscending(photoState: PhotoState): {country: string; cities: {city: string; photos: Photo[]}[]}[] {
+    return getCountriesAndCitiesWithPhotos(photoState);
+}
+
+export function getCountriesAndCitiesWithPhotosDescending(photoState: PhotoState): {country: string; cities: {city: string; photos: Photo[]}[]}[] {
+    return getCountriesAndCitiesWithPhotos(photoState).reverse();
 }
 
 function latLngToNumberArray(latLng: LatLng): number[] {
@@ -53,7 +67,7 @@ function pointInCircle(lat: number, lng: number, circle: MapCircleProps): boolea
 }
 
 function filterByDateAndlabels(photos: Photo[], searchTerm: SearchTerm): Photo[] {
-    if (searchTerm.labels) {
+    if (searchTerm.labels.length > 0) {
         photos = photos.filter(x => x.labels.some(label => searchTerm.labels?.includes(label)));
     }
     if (searchTerm.dateTo) {
@@ -64,4 +78,47 @@ function filterByDateAndlabels(photos: Photo[], searchTerm: SearchTerm): Photo[]
     }
     
     return photos;
+}
+
+function getCountriesAndCitiesWithPhotos(photoState: PhotoState): {country: string; cities: {city: string; photos: Photo[]}[]}[] {
+    const countriesAndCitiesWithPhotos: {country: string; cities: {city: string; photos: Photo[]}[]}[] = [];
+    const photos = photoState.photos.filter(x => x.country && x.city);
+
+    const gByCountry = groupBy(photos, 'country');
+
+    for(var country in gByCountry) {
+        const gByCity = groupBy(gByCountry[country], 'city');
+
+        const cities: {city: string; photos: Photo[]}[] = [];
+
+        for(var city in gByCity) {
+            cities.push({city: city, photos: (gByCity[city] as Photo[])});
+        }
+
+        countriesAndCitiesWithPhotos.push({country: country, cities: cities.sort(compareCity)});
+    }
+
+    countriesAndCitiesWithPhotos.sort(compareCountry);
+    
+    return countriesAndCitiesWithPhotos;
+}
+
+function compareCountry( a: {country: string; cities: {city: string; photos: Photo[]}[]}, b: {country: string; cities: {city: string; photos: Photo[]}[]} ) {
+    if (a.country < b.country){
+      return -1;
+    }
+    if (a.country > b.country){
+      return 1;
+    }
+    return 0;
+}
+
+function compareCity( a: {city: string; photos: Photo[]}, b: {city: string; photos: Photo[]} ) {
+    if (a.city < b.city){
+      return -1;
+    }
+    if (a.city > b.city){
+      return 1;
+    }
+    return 0;
 }
