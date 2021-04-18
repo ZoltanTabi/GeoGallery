@@ -39,6 +39,7 @@ import { updateSearchTerm } from '../storage/actions/searchTermAction';
 import DatePicker from 'react-native-date-picker'
 import { galleryFilter, getCountriesAndCities } from '../helpers/searchFilter';
 import { ImageList } from './ImageList';
+import { SearchTerm, SearchTermState } from '../interfaces/searchTerm';
 
 const GalleryScreen = () => {
 
@@ -49,13 +50,25 @@ const GalleryScreen = () => {
     navigation.navigate('Full image', {id: propPhoto});
   }
 
+  const copyFilterState = (filterState: SearchTermState): SearchTerm => {
+    let copy = {...filterState.searchTerm};
+
+    copy.cities = [...filterState.searchTerm.cities];
+    copy.labels = [...filterState.searchTerm.labels];
+
+    return copy;
+  }
+
   const labelState = useSelector((state: RootState) => state.labelState);
   const photoState = useSelector((state: RootState) => state.photoState);
   const filterState = useSelector((state: RootState) => state.searchTermState);
 
   const filteredPhotoState: PhotoState =  { photos: galleryFilter(photoState, filterState)};
 
-  const [tempFilterState, setTempFilterState] = React.useState({...filterState.searchTerm});
+  const [tempFilterState, setTempFilterState] = React.useState(copyFilterState(filterState));
+  useEffect(() => {
+    setTempFilterState(copyFilterState(filterState));
+  }, [filterState]);
 
   const [citiesCheckedState, setCitiesCheckedState] = React.useState(getCountriesAndCities(photoState));
   useEffect(() => {

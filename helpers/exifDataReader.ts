@@ -41,6 +41,15 @@ export const getDateTimeFromExif = (exif: any) => {
         }*/
         if (dateTime) {
             const t = dateTime.split(/[:| ]/);
+
+            /*const date = new Date(Number(t[0]), (Number(t[1])-1), Number(t[2]), Number(t[3]), Number(t[4]), Number(t[5]));
+
+
+            devConsoleLog('t: ' + t);
+            devConsoleLog('date: ' + date);
+            devConsoleLog('toDateString: ' + date.toDateString());*/
+
+            return new Date(Number(t[0]), (Number(t[1])-1), Number(t[2]), Number(t[3]), Number(t[4]), Number(t[5]));;
         }
     }
 }
