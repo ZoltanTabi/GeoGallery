@@ -194,12 +194,7 @@ const GalleryScreen = () => {
   }
 
   const onCancelPress = () => {
-    tempFilterState.cities = filterState.searchTerm.cities;
-    tempFilterState.countries = filterState.searchTerm.countries;
-    tempFilterState.dateTo = filterState.searchTerm.dateTo;
-    tempFilterState.dateFrom = filterState.searchTerm.dateFrom;
-    tempFilterState.labels = filterState.searchTerm.labels;
-    setTempFilterState({...tempFilterState});
+    setTempFilterState(copyFilterState(filterState));
 
     citiesCheckedState.forEach(country => {
       country.cities.forEach(city => {

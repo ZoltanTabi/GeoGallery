@@ -78,10 +78,10 @@ function filterByDateAndlabels(photos: Photo[], searchTerm: SearchTerm): Photo[]
         photos = photos.filter(x => x.labels.some(label => searchTerm.labels?.includes(label)));
     }
     if (searchTerm.dateTo) {
-        photos = photos.filter(x => x.createDate && x.createDate >= (searchTerm.dateTo as Date));
+        photos = photos.filter(x => x.createDate && x.createDate <= (searchTerm.dateTo as Date));
     }
     if (searchTerm.dateFrom) {
-        photos = photos.filter(x => x.createDate && x.createDate <= (searchTerm.dateFrom as Date));
+        photos = photos.filter(x => x.createDate && x.createDate >= (searchTerm.dateFrom as Date));
     }
     
     return photos;
