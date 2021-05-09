@@ -4,7 +4,6 @@ import { getDateTimeFromExif, getLatLongFromExif } from "./exifDataReader";
 import Geocoder from '@timwangdev/react-native-geocoder';
 import { Image } from 'react-native-image-crop-picker';
 
-
 export function findIndexById(array: any[], id: string): number {
     return array.indexOf(array.find(x => id === x.id));
 }

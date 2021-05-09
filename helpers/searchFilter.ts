@@ -152,10 +152,9 @@ function compareDate( a: {date: Date; photos: Photo[]}, b: {date: Date; photos: 
     return 0;
 }
 
-export function photoGroupByDate(xs: any[], key: string | number) {
+function photoGroupByDate(xs: any[], key: string | number) {
     return xs.reduce(function(rv, x) {
         (rv[new Date(x[key]).toDateString()] = rv[new Date(x[key]).toDateString()] || []).push(x);
         return rv;
     }, {});
 };
-
