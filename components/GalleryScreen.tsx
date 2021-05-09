@@ -119,7 +119,7 @@ const GalleryScreen = () => {
 	const showCheck = () => setVisibleCheck(true);	
 	const hideCheck = () => setVisibleCheck(false);
 
-  const [sortingValue, setSortingValue] = React.useState('none');
+  const [sortingValue, setSortingValue] = React.useState('default');
   const [sortingOrder, setSortingOrder] = React.useState('ascending');
   const [fromDate, setFromDate] = useState(new Date())
   const [toDate, setToDate] = useState(new Date())
@@ -489,26 +489,24 @@ const GalleryScreen = () => {
               <Dialog.Title style={{color: '#5c80ac'}}>Sort images</Dialog.Title>
               <Dialog.Content style={{backgroundColor: '#5c80ac'}}>
                 <RadioButton.Group onValueChange={value => setSortingValue(value)} value={sortingValue}>
-                <RadioButton.Item label="None" 
-                                    value="none" 
+                <RadioButton.Item label="Default" 
+                                    value="default" 
                                     color='#ffffff'/>
                   <RadioButton.Item label="Location" 
                                     value="location" 
                                     color='#ffffff'/>
-                  {/*<RadioButton.Item label="Date" 
+                  <RadioButton.Item label="Date" 
                                     value="date" 
-                                    color='#ffffff'/>*/}
+                                    color='#ffffff'/>
                 </RadioButton.Group>
                 <Divider style={{height: 2, marginVertical: '3%'}}/>
                 <RadioButton.Group onValueChange={value => setSortingOrder(value)} value={sortingOrder}>
                   <RadioButton.Item label="Ascending" 
                                     value="ascending" 
-                                    color='#ffffff'
-                                    disabled={sortingValue==='none'}/>
+                                    color='#ffffff'/>
                   <RadioButton.Item label="Descending" 
                                     value="descending" 
-                                    color='#ffffff'
-                                    disabled={sortingValue==='none'}/>
+                                    color='#ffffff'/>
                 </RadioButton.Group>
               </Dialog.Content>
               <Dialog.Actions>
