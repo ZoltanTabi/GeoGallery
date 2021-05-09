@@ -274,19 +274,6 @@ const GalleryScreen = () => {
       <View style={{ flex : 10,
                     alignItems: 'center' }}>
         <ImageList photoState={filteredPhotoState} sortingValue={sortingValue} sortingOrder={sortingOrder} />
-        {/*<FlatList
-          numColumns={4}
-          data={photoState.photos}
-          keyExtractor={item => item.id}
-          renderItem={({item})=>{
-            return (
-              <Pressable onPress={() => onFullImage(item.id)}>
-                <Image source={{uri: item.imageUri}} 
-                        style={{ height: 80, width: 80, marginHorizontal: '0.5%', marginVertical: '2%' }}/>
-              </Pressable>
-            )
-          }}
-        />*/}
         <Provider>
           <Portal>
             <FAB.Group 

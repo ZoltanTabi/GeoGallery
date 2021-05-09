@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { ReactElement, useState } from 'react';
-import { Image, PermissionsAndroid, StyleSheet, View } from 'react-native';
+import { Image, PermissionsAndroid, StyleSheet, useWindowDimensions, View } from 'react-native';
 import MapView from "react-native-map-clustering";
 import { Region, PROVIDER_GOOGLE, Marker, LatLng, MapEvent, Circle, MapCircleProps, Polygon, MapPolygonProps, MapTypes, Heatmap, WeightedLatLng } from 'react-native-maps';
 import { Button, Dialog, Divider, FAB, Paragraph, Portal, Provider, RadioButton, Subheading } from 'react-native-paper';
@@ -36,8 +36,16 @@ const MapScreen = (): ReactElement => {
   const [rectangle, setRectangle] = useState<MapPolygonProps>();
 
   const [visibleMapOption, setVisibleMapOption] = useState(false);
-	const showMapOption = () => setVisibleMapOption(true);	
-	const hideMapOption = () => setVisibleMapOption(false);
+	const showMapOption = () => {
+    setFabProps({...fabProps, visible: false});
+    setVisibleMapOption(true);
+  }
+	const hideMapOption = () => {
+    setFabProps({...fabProps, visible: true});
+    setVisibleMapOption(false);
+  }
+  
+  const fabButtonMarginBottom = (useWindowDimensions().height / 100) * 83;
 
   const weightedLatLngs: WeightedLatLng [] = photos.filter(x => x.latitude && x.longitude).map(photo => ({
     latitude: photo.latitude as number,
@@ -296,7 +304,7 @@ const MapScreen = (): ReactElement => {
       <Provider>
         <Portal>
           <FAB
-            style={styles.fabStyle}
+            style={{...styles.fabStyle, marginBottom: fabButtonMarginBottom}}
             color={'#cccccc'}
             visible={fabProps.visible}
             icon='layers-outline'
@@ -386,7 +394,6 @@ const styles = StyleSheet.create({
   fabStyle: {
     backgroundColor: '#5cac7b',
     position: 'absolute',
-    marginBottom: 620,
     right: 16,
     bottom: 0
   }
