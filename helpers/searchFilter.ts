@@ -2,7 +2,7 @@ import { Photo, PhotoState } from '../interfaces/photo';
 import { SearchTerm, SearchTermState } from '../interfaces/searchTerm';
 import { MapCircleProps, LatLng } from 'react-native-maps';
 import { getDistance } from './drawing';
-import { groupBy, onlyUnique } from './functions';
+import { devConsoleLog, groupBy, onlyUnique } from './functions';
 var pointInPolygon = require('point-in-polygon');
 
 export function galleryFilter(photoState: PhotoState, searchTermState: SearchTermState): Photo[] {
@@ -77,11 +77,11 @@ function filterByDateAndlabels(photos: Photo[], searchTerm: SearchTerm): Photo[]
     if (searchTerm.labels.length > 0) {
         photos = photos.filter(x => x.labels.some(label => searchTerm.labels?.includes(label)));
     }
-    if (searchTerm.dateTo) {
-        photos = photos.filter(x => x.createDate && x.createDate <= (searchTerm.dateTo as Date));
-    }
     if (searchTerm.dateFrom) {
-        photos = photos.filter(x => x.createDate && x.createDate >= (searchTerm.dateFrom as Date));
+        photos = photos.filter(x => x.createDate && new Date(x['createDate']).getTime() >= (searchTerm.dateFrom as Date).getTime());
+    }
+    if (searchTerm.dateTo) {
+        photos = photos.filter(x => x.createDate && new Date(x['createDate']).getTime() <= (searchTerm.dateTo as Date).getTime());
     }
     
     return photos;
@@ -133,7 +133,7 @@ function compareCity( a: {city: string; photos: Photo[]}, b: {city: string; phot
 function getOrderByDateTime(photoState: PhotoState): {date: Date; photos: Photo[]}[] {
     const photosByDate: {date: Date; photos: Photo[]}[] =[];
 
-    const gByDate = groupBy(photoState.photos.filter(x => x.createDate), 'createDate');
+    const gByDate = photoGroupByDate(photoState.photos.filter(x => x.createDate), 'createDate');
 
     for(var date in gByDate) {
         photosByDate.push({date: new Date(date), photos: gByDate[date]})
@@ -151,3 +151,11 @@ function compareDate( a: {date: Date; photos: Photo[]}, b: {date: Date; photos: 
     }
     return 0;
 }
+
+export function photoGroupByDate(xs: any[], key: string | number) {
+    return xs.reduce(function(rv, x) {
+        (rv[new Date(x[key]).toDateString()] = rv[new Date(x[key]).toDateString()] || []).push(x);
+        return rv;
+    }, {});
+};
+
