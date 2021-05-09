@@ -15,6 +15,6 @@ describe('get date from exif data', () => {
         expect(getDateTimeFromExif({})).toBe(undefined);
     });
     it('2021.05.09. 10:20:20', () => {
-        expect(getDateTimeFromExif({DateTime: '2021:05:09 10:20:20'})).toStrictEqual(new Date('2021-05-09T08:20:20.000Z'));
+        expect(getDateTimeFromExif({DateTime: '2021:05:09 10:20:20'})).toStrictEqual(new Date(2021, 5-1, 9,10, 20, 20));
     });
 });

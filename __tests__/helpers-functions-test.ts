@@ -80,7 +80,7 @@ describe('imageToPhoto', () => {
         expect(await imageToPhoto(image, ImageType.Camera)).toMatchObject(photo);
     });
     it('with date in exif', async () => {
-        const photo = {"address": undefined, "city": undefined, "country": undefined, "createDate": new Date('2021-05-09T08:20:20.000Z'), "height": 400, "imageUri": "", "labels": [], "latitude": undefined, "longitude": undefined, "type": 1, "width": 400}
+        const photo = {"address": undefined, "city": undefined, "country": undefined, "createDate": new Date(2021, 5-1, 9,10, 20, 20), "height": 400, "imageUri": "", "labels": [], "latitude": undefined, "longitude": undefined, "type": 1, "width": 400}
 
         const image: Image = {
             path: '',
