@@ -214,7 +214,7 @@ const GalleryScreen = () => {
         }));
 
         dispatch(addMultiplePhoto(photoForAdds));
-    }).catch(error => console.log(error));
+    }).catch(error => devConsoleLog(error));
   }
 
   return (
