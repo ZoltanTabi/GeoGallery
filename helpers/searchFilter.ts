@@ -2,7 +2,7 @@ import { Photo, PhotoState } from '../interfaces/photo';
 import { SearchTerm, SearchTermState } from '../interfaces/searchTerm';
 import { MapCircleProps, LatLng } from 'react-native-maps';
 import { getDistance } from './drawing';
-import { devConsoleLog, groupBy, onlyUnique } from './functions';
+import { groupBy } from './functions';
 var pointInPolygon = require('point-in-polygon');
 
 export function galleryFilter(photoState: PhotoState, searchTermState: SearchTermState): Photo[] {

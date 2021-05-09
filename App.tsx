@@ -1,55 +1,15 @@
 import React, { useLayoutEffect } from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native';
-
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-import { 
-  Provider as PaperProvider 
-} from 'react-native-paper';
-
-import { 
-  NavigationContainer 
-} from '@react-navigation/native';
-
-import {
-   createMaterialBottomTabNavigator 
-} from '@react-navigation/material-bottom-tabs';
-
-import
-  MaterialCommunityIcons
-from 'react-native-vector-icons/MaterialCommunityIcons';
-
-import
-  CameraScreen
-from './components/CameraScreen';
-
-import
-  MapScreen
-from './components/MapScreen';
-
-import
-  GalleryScreen
-from './components/GalleryScreen';
-
+import { Provider as PaperProvider } from 'react-native-paper';
+import { NavigationContainer } from '@react-navigation/native';
+import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MapScreen from './components/MapScreen';
+import GalleryScreen from './components/GalleryScreen';
 import { Provider as StoreProvider, useDispatch } from "react-redux";
 import store from './storage/store';
 import { initState } from './storage/actions/commonAction';
 import LabelEditingScreen from './components/LabelEditingScreen';
 import { createStackNavigator } from '@react-navigation/stack';
-import { color } from 'react-native-reanimated';
 import FullImageScreen from './components/FullImageScreen';
 import { Screen } from './enums/screen';
 
@@ -96,45 +56,6 @@ const NavBar = () => {
     </Tab.Navigator>
   );
 };
-
-const styles = StyleSheet.create({
-  scrollView: {
-    backgroundColor: Colors.lighter,
-  },
-  engine: {
-    position: 'absolute',
-    right: 0,
-  },
-  body: {
-    backgroundColor: Colors.white,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
-  },
-});
 
 export default function App() {
   return (

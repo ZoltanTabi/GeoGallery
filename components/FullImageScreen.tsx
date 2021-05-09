@@ -1,14 +1,13 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/core';
 import React, { ReactElement, useEffect, useState } from 'react';
-import { View, Text, Image, useWindowDimensions } from 'react-native';
+import { View, Image, useWindowDimensions, StyleSheet } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import ImageZoom from 'react-native-image-pan-zoom';
-import { Badge, Button, Chip, DataTable, Dialog, FAB, IconButton, Subheading, Portal, Provider } from 'react-native-paper';
+import { Button, Chip, DataTable, Dialog, FAB, IconButton, Subheading, Portal, Provider } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { Photo } from '../interfaces/photo';
 import { RootState } from '../storage';
 import { commonAddLabelToPhoto, commonDeletePhoto, commonRemoveLabelFromPhoto } from '../storage/actions/commonAction';
-import { removeLabelFromPhoto } from '../storage/actions/photoAction';
 
 const FullImageScreen = (): ReactElement => {
 
@@ -65,14 +64,18 @@ const FullImageScreen = (): ReactElement => {
   	}
 
 	return (
-		<View style={{ flex: 1}}>
-			<View style={{ flex: 18, justifyContent: 'center', alignItems: 'center' }}>
-				<ImageZoom imageHeight={((Math.round(windowWidth)/photoObject.width) * photoObject.height)}
-							imageWidth={Math.round(windowWidth)}
-							cropWidth={windowWidth}
-                       		cropHeight={windowHeight}>
-					<Image source={{ uri: photoObject.imageUri }}
-						style={{ height: ((Math.round(windowWidth)/photoObject.width) * photoObject.height), width: Math.round(windowWidth)}} />
+		<View style={styles.mainView}>
+			<View style={styles.secondView}>
+				<ImageZoom
+					imageHeight={((Math.round(windowWidth)/photoObject.width) * photoObject.height)}
+					imageWidth={Math.round(windowWidth)}
+					cropWidth={windowWidth}
+					cropHeight={windowHeight}
+				>
+					<Image
+						source={{ uri: photoObject.imageUri }}
+						style={{ height: ((Math.round(windowWidth)/photoObject.width) * photoObject.height), width: Math.round(windowWidth)}}
+					/>
 				</ImageZoom>
 			</View>			
 			<Provider>
@@ -133,13 +136,9 @@ const FullImageScreen = (): ReactElement => {
 									{actLabels.length === 0 && "No labels"}		
 								</DataTable.Cell>
 							</DataTable.Row>
-							<View style={{
-									flexDirection: 'row', 
-									flexWrap: 'wrap', 
-									justifyContent: 'center', 
-									}}>						  
-									{
-									actLabels.map((item) => {
+							<View style={styles.dialogView}>						  
+								{
+								actLabels.map((item) => {
 									return (
 										<Chip
 											children={item.text}
@@ -147,10 +146,10 @@ const FullImageScreen = (): ReactElement => {
 											textStyle={{ color:'white',fontSize: 15 }}
 											style={{ margin: 4, backgroundColor: item.color }}
 											key={item.id}
-											/>
-										);
-									})}
-									</View>
+										/>
+									);
+								})}
+							</View>
 						</DataTable>
 						</Dialog.Content>
 					</Dialog>
@@ -162,44 +161,36 @@ const FullImageScreen = (): ReactElement => {
 							<ScrollView>
 								<View style={{maxHeight: '30%'}}>
 								<Subheading style={{padding: 5}}>Labels of the photo:</Subheading>
-								<View style={{
-										flexDirection: 'row', 
-										flexWrap: 'wrap', 
-										justifyContent: 'center', 
-										}}>
+								<View style={styles.dialogView}>
 									{
 									actLabels.map((item) => {
-									return (
-										<Chip
-											children={item.text}
-											mode="outlined" 
-											textStyle={{ color:'white',fontSize: 15 }}
-											style={{ margin: 4, backgroundColor: item.color }}
-											key={item.id}
-											onClose={() => dispatch(commonRemoveLabelFromPhoto(photoObject.id, item.id))}
-											onPress={() => {}}
-											onLongPress={() => onLabelEditing(item.id)}
+										return (
+											<Chip
+												children={item.text}
+												mode="outlined" 
+												textStyle={{ color:'white',fontSize: 15 }}
+												style={{ margin: 4, backgroundColor: item.color }}
+												key={item.id}
+												onClose={() => dispatch(commonRemoveLabelFromPhoto(photoObject.id, item.id))}
+												onPress={() => {}}
+												onLongPress={() => onLabelEditing(item.id)}
 											/>
 										);
 									})}							
 								</View>					
 								<Subheading style={{padding: 5}}>Other labels:</Subheading>
-								<View style={{
-										flexDirection: 'row', 
-										flexWrap: 'wrap', 
-										justifyContent: 'center', 
-										}}>
+								<View style={styles.dialogView}>
 									{
 									otherLabels.map((item) => {
-									return (
-										<Chip
-											children={item.text}
-											mode="outlined" 
-											textStyle={{ color:'white',fontSize: 15 }}
-											style={{ margin: 4, backgroundColor: item.color }}
-											key={item.id}
-											onPress={() => dispatch(commonAddLabelToPhoto(photoObject.id, item.id))}
-											onLongPress={() => onLabelEditing(item.id)}
+										return (
+											<Chip
+												children={item.text}
+												mode="outlined" 
+												textStyle={{ color:'white',fontSize: 15 }}
+												style={{ margin: 4, backgroundColor: item.color }}
+												key={item.id}
+												onPress={() => dispatch(commonAddLabelToPhoto(photoObject.id, item.id))}
+												onLongPress={() => onLabelEditing(item.id)}
 											/>
 										);
 									})}		
@@ -233,3 +224,19 @@ const FullImageScreen = (): ReactElement => {
 };
 
 export default FullImageScreen;
+
+const styles = StyleSheet.create({
+	mainView: {
+		flex: 1
+	},
+	secondView: {
+		flex: 18,
+		justifyContent: 'center',
+		alignItems: 'center'
+	},
+	dialogView: {
+		flexDirection: 'row', 
+		flexWrap: 'wrap', 
+		justifyContent: 'center', 
+	}
+});

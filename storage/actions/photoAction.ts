@@ -16,6 +16,7 @@ import { StateEnum } from '../../enums/stateEnum';
 import { Dispatch } from 'redux';
 import { Platform } from 'react-native';
 import RNFS from 'react-native-fs';
+import { devConsoleLog } from '../../helpers/functions';
 
 /**
  * @description Don't use this action! Use initState.
@@ -49,7 +50,7 @@ export function addPhoto(photoForAdd: PhotoForAdd) {
             );
         })
         .catch((err: any) => {
-            console.log(err.message);
+            devConsoleLog(err.message);
         });
     }
 }
@@ -92,7 +93,7 @@ export function deletePhoto(id: string, uri: string) {
             );
         })
         .catch((err: any) => {
-            console.log(err.message);
+            devConsoleLog(err.message);
         });
     }
 }

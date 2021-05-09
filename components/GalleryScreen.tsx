@@ -1,34 +1,9 @@
-import { useNavigation } from '@react-navigation/native';
-import React, { Children, useEffect, useState } from 'react';
-import {
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-  FlatList,
-  useWindowDimensions,
-  Pressable,
-  Image,
-  PermissionsAndroid,
-  DatePickerIOSBase,
-} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, ScrollView, View, Text, Pressable, PermissionsAndroid,} from 'react-native';
 import ImageCropPicker from 'react-native-image-crop-picker';
-
-import { Button, Chip, Portal, FAB, Provider, Dialog, Paragraph, List, Surface, Subheading, Divider, RadioButton, Checkbox, Title, IconButton } from 'react-native-paper';
-import { color, set } from 'react-native-reanimated';
-
-import {
-  Header,
-  LearnMoreLinks,
-  Colors,
-  DebugInstructions,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
+import { Button, Chip, Portal, FAB, Provider, Dialog, Surface, Subheading, Divider, RadioButton, Checkbox, Title } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
-import { devConsoleLog, getNewId, imageToPhoto } from '../helpers/functions';
+import { devConsoleLog, imageToPhoto } from '../helpers/functions';
 import { Label } from '../interfaces/label';
 import { ImageType, PhotoForAdd, PhotoState } from '../interfaces/photo';
 import { RootState } from '../storage';
@@ -44,12 +19,6 @@ import { SearchTerm, SearchTermState } from '../interfaces/searchTerm';
 const GalleryScreen = () => {
 
   const dispatch = useDispatch();
-  const navigation = useNavigation();
-
-  const onFullImage = (propPhoto: string) => {
-    navigation.navigate('Full image', {id: propPhoto});
-  }
-
   const copyFilterState = (filterState: SearchTermState): SearchTerm => {
     let copy = {...filterState.searchTerm};
 
@@ -227,8 +196,6 @@ const GalleryScreen = () => {
         }).catch(error => devConsoleLog(error));
       })
       .catch((error) => devConsoleLog(error));
-    } else {
-      //TODO Dialog
     }
   }
 
@@ -251,11 +218,8 @@ const GalleryScreen = () => {
   }
 
   return (
-    <View style={{flex: 1}}>
-      <View style={{flex: 1, 
-                    flexDirection: 'row', 
-                    alignItems: 'center', 
-                    justifyContent: 'center'}}>
+    <View style={styles.mainView}>
+      <View style={styles.buttonView}>
         <Button style={{marginHorizontal: '10%'}}
                 icon='filter' mode='contained' 
                 color='#5c80ac' 
@@ -271,8 +235,7 @@ const GalleryScreen = () => {
           Sort
         </Button>
       </View>
-      <View style={{ flex : 10,
-                    alignItems: 'center' }}>
+      <View style={styles.imageView}>
         <ImageList photoState={filteredPhotoState} sortingValue={sortingValue} sortingOrder={sortingOrder} />
         <Provider>
           <Portal>
@@ -312,13 +275,7 @@ const GalleryScreen = () => {
               <Dialog.ScrollArea style={{height: '60%'}}>
                 <ScrollView >
                   <View style={{height: '50%'}}>
-                    <Surface style={{
-                          backgroundColor: '#5c80ac',
-                          padding: 8,
-                          marginVertical: '3%',
-                          //alignItems: 'center',
-                          justifyContent: 'center',
-                          elevation: 4}}>                        
+                    <Surface style={styles.surface}>                        
                         <Subheading style={{padding: 5}}>Location</Subheading>
                         <Pressable 
                             style={{borderColor: '#cccccc', borderWidth: 0.2,  minHeight: '10%', justifyContent: 'center'}} 
@@ -328,13 +285,7 @@ const GalleryScreen = () => {
                           </Subheading>
                         </Pressable>
                     </Surface>
-                    <Surface style={{
-                          backgroundColor: '#5c80ac',
-                          padding: 8,                      
-                          marginVertical: '3%',
-                          //alignItems: 'center',
-                          justifyContent: 'center',
-                          elevation: 4}}>
+                    <Surface style={styles.surface}>
                         <Subheading style={{padding: 5}}>Date</Subheading>
                         <View>
                         <Text style={{color: '#ffffff'}}>From:</Text>
@@ -343,22 +294,9 @@ const GalleryScreen = () => {
                         <Button mode='outlined' color='#ffffff' onPress={showTo}>{tempFilterState.dateTo?.toDateString()}</Button>
                       </View>
                     </Surface>
-                    <Surface style={{
-                          backgroundColor: '#5c80ac',
-                          padding: 8,
-                          marginVertical: '3%',
-                          //alignItems: 'center',
-                          justifyContent: 'center',
-                          elevation: 4}}>
+                    <Surface style={styles.surface}>
                         <Subheading style={{padding: 5}}>Label</Subheading>
-                        <View style={{
-                              marginTop: 10,
-                              padding: '2%',
-                              flexDirection: 'row', 
-                              flexWrap: 'wrap',
-                              alignItems: 'center', 
-                              justifyContent: 'center', 
-                              }}>
+                        <View style={styles.labelView}>
                           {
                           labelState.labels.map((item) => {
                             return (
@@ -370,7 +308,7 @@ const GalleryScreen = () => {
                                   style={{ margin: 4, backgroundColor: item.color }}
                                   key={item.id}
                                   onPress={() => onLabelPress(item)}
-                                  />
+                                />
                             );
                           })}
                         </View>
@@ -378,14 +316,7 @@ const GalleryScreen = () => {
                     { (filterState.searchTerm.circle !== undefined || 
                       filterState.searchTerm.polygon !== undefined ||
                       filterState.searchTerm.photoIdsByClusterFilter !== undefined) &&
-                      <Surface style={{
-                        backgroundColor: '#5c80ac',
-                        padding: 8,            
-                        flexDirection: 'row',          
-                        marginVertical: '3%',
-                        //alignItems: 'center',
-                        //justifyContent: 'center',
-                        elevation: 4}}>
+                      <Surface style={styles.surface}>
                         <Button mode='outlined' icon='close' color='#ffffff' onPress={() => {onMapSelectionPress()}}>Selection from map</Button>
                       </Surface>
                     }
@@ -508,50 +439,34 @@ const GalleryScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: 100,
-    alignItems: "center"
-  },
-  row: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    paddingHorizontal: 12
-  },
-  engine: {
-    position: 'absolute',
-    right: 0,
-  },
-  body: {
-    backgroundColor: Colors.white,
-  },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-    color: Colors.black,
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-    color: Colors.dark,
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-  footer: {
-    color: Colors.dark,
-    fontSize: 12,
-    fontWeight: '600',
-    padding: 4,
-    paddingRight: 12,
-    textAlign: 'right',
-  },
-});
-
 export default GalleryScreen;
+
+const styles = StyleSheet.create({
+	mainView: {
+		flex: 1
+	},
+	buttonView: {flex: 1, 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    justifyContent: 'center'
+  },
+	imageView: {
+    flex : 10,
+    alignItems: 'center' 
+	},
+  labelView: {
+    marginTop: 10,
+    padding: '2%',
+    flexDirection: 'row', 
+    flexWrap: 'wrap',
+    alignItems: 'center', 
+    justifyContent: 'center', 
+  },
+  surface: {
+    backgroundColor: '#5c80ac',
+    padding: 8,
+    marginVertical: '3%',
+    justifyContent: 'center',
+    elevation: 4
+  }
+});

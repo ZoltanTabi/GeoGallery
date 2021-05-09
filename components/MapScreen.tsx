@@ -3,13 +3,13 @@ import React, { ReactElement, useState } from 'react';
 import { Image, PermissionsAndroid, StyleSheet, useWindowDimensions, View } from 'react-native';
 import MapView from "react-native-map-clustering";
 import { Region, PROVIDER_GOOGLE, Marker, LatLng, MapEvent, Circle, MapCircleProps, Polygon, MapPolygonProps, MapTypes, Heatmap, WeightedLatLng } from 'react-native-maps';
-import { Button, Dialog, Divider, FAB, Paragraph, Portal, Provider, RadioButton, Subheading } from 'react-native-paper';
+import { Button, Dialog, Divider, FAB, Portal, Provider, RadioButton } from 'react-native-paper';
 import { useDispatch, useSelector } from 'react-redux';
 import { ClusterType } from '../enums/clusterType';
 import { DrawingMode } from '../enums/drawingMode';
 import { MapStyle } from '../enums/mapStyle';
 import { Screen } from '../enums/screen';
-import { distanceByLatLng, getDistance } from '../helpers/drawing';
+import { distanceByLatLng, } from '../helpers/drawing';
 import { devConsoleLog, onlyUnique } from '../helpers/functions';
 import { mapFilter } from '../helpers/searchFilter';
 import { RootState } from '../storage';
@@ -129,38 +129,10 @@ const MapScreen = (): ReactElement => {
       default:
         return;
     }
-    devConsoleLog('onPanDrag - coordinate: ' + coordinate.latitude + ', ' + coordinate.longitude);
   }
   
   const onLongPress = (event: MapEvent) => {
-    /*if (!drawingMode.enabled)
-      return;
 
-    const coordinate = event.nativeEvent.coordinate;
-
-    switch(drawingMode.type) {
-      case DrawingMode.None:
-        return;
-      case DrawingMode.Circle:
-        {
-          setCircle({ center: coordinate, radius: 10000 });
-        }
-        break;
-      case DrawingMode.Rectangle:
-        {
-          setRectangle({
-            coordinates: [
-              coordinate,
-              { latitude: coordinate.latitude - 1, longitude: coordinate.longitude},
-              { latitude: coordinate.latitude - 1, longitude: coordinate.longitude - 1},
-              { latitude: coordinate.latitude, longitude: coordinate.longitude - 1},
-            ]
-          });
-        }
-        break;
-      default:
-        return;
-    }*/
   }
 
   const onMapTouchEnd = () => {
@@ -344,7 +316,6 @@ const MapScreen = (): ReactElement => {
           >
 						<Dialog.Title style={{color: '#5cac7b'}}>Map options</Dialog.Title>
             <Dialog.Content style={{backgroundColor: '#5cac7b'}}>
-              {/*<Subheading style={{color: '#ffffff'}}>Map type</Subheading>*/}
               <RadioButton.Group onValueChange={value => setStyle(value as MapStyle)} value={style}>
                 {
                   mapStyles.map((item) => {
@@ -355,7 +326,6 @@ const MapScreen = (): ReactElement => {
                 }
               </RadioButton.Group>
               <Divider style={{height: 2, marginVertical: '3%'}}/>
-              {/*<Subheading style={{color: '#ffffff'}}>Cluster type</Subheading>*/}
               <RadioButton.Group onValueChange={value => setClusterType(value as ClusterType)} value={clusterType}>
                 {
                   clusterTypes.map((item) => {
