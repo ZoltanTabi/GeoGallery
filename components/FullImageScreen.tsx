@@ -41,9 +41,8 @@ const FullImageScreen = (): ReactElement => {
 		navigation.navigate('Editing label', {id: checkId});
 	}
 
-	const [state, setState] = React.useState( false );
-	const onStateChange = (open: boolean) => setState( open );
-	const open = state;
+	const [open, setOpen] = React.useState( false );
+	const onStateChange = (open: boolean) => setOpen( open );
 
 	const [visibleInfo, setVisibleInfo] = React.useState(false);
 	const showInfo = () => setVisibleInfo(true);
