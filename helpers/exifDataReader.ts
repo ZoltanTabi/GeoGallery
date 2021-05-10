@@ -38,7 +38,7 @@ export const getDateTimeFromExif = (exif: any) => {
         if (dateTime) {
             const t = dateTime.split(/[:| ]/);
 
-            return new Date(Number(t[0]), (Number(t[1])-1), Number(t[2]), Number(t[3]), Number(t[4]), Number(t[5]));;
+            return new Date(Number(t[0]), (Number(t[1])-1), Number(t[2]), Number(t[3]), Number(t[4]), Number(t[5]));
         }
     }
 }

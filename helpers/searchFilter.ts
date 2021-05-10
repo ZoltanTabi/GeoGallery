@@ -54,11 +54,11 @@ export function getCountriesAndCitiesWithPhotosDescending(photoState: PhotoState
 }
 
 export function getOrderByDateTimeAscending(photoState: PhotoState): {date: Date; photos: Photo[]}[] {
-    return getOrderByDateTime(photoState).reverse();
+    return getOrderByDateTime(photoState);
 }
 
 export function getOrderByDateTimeDescending(photoState: PhotoState): {date: Date; photos: Photo[]}[] {
-    return getOrderByDateTime(photoState);
+    return getOrderByDateTime(photoState).reverse();
 }
 
 function latLngToNumberArray(latLng: LatLng): number[] {
