@@ -83,14 +83,14 @@ describe('getCountriesAndCities', () => {
 });
 
 describe('getCountriesAndCitiesWithPhotosAscending', () => {
-    it('getCountriesAndCities', () => {
+    it('getCountriesAndCitiesWithPhotosAscending', () => {
         expect(getCountriesAndCitiesWithPhotosAscending({photos: photos}))
             .toStrictEqual([{country: 'aCountry', cities: [{city: 'b', photos: [{id: '5', address: 'aCountry, b', city: 'b', country: 'aCountry', createDate: new Date(2021, 5-1, 9, 10, 20, 20), height: 400, imageUri: "", labels: ['apple'], latitude: 47.497913000000004, longitude: 19.040236, type: 1, width: 400}]}]}]);
     });
 });
 
 describe('getCountriesAndCitiesWithPhotosAscending', () => {
-    it('getCountriesAndCities', () => {
+    it('getCountriesAndCitiesWithPhotosAscending', () => {
         expect(getOrderByDateTimeAscending({photos: photos}))
             .toStrictEqual([{date: new Date(2021, 5-1, 9, 0, 0, 0), photos: [{id: '5', address: 'aCountry, b', city: 'b', country: 'aCountry', createDate: new Date(2021, 5-1, 9, 10, 20, 20), height: 400, imageUri: "", labels: ['apple'], latitude: 47.497913000000004, longitude: 19.040236, type: 1, width: 400}]}]);
     });

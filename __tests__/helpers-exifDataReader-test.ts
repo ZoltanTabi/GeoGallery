@@ -1,7 +1,7 @@
 import 'react-native';
 import { getLatLongFromExif, getDateTimeFromExif } from '../helpers/exifDataReader';
 
-describe('get latitude and latitude from exif data', () => {
+describe('get latitude and longitude from exif data', () => {
     it('undefined', () => {
         expect(getLatLongFromExif({})).toBe(undefined);
     });
